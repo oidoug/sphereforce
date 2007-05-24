@@ -3,8 +3,8 @@
  *
  * Created on April 22, 2007, 10:49 AM
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * Parte do projeto Sphere Force
+ * por Douglas Schmidt, Renato Euclides Silva e Mateus Balconi
  */
 
 package labirinto;
@@ -20,17 +20,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Vector;
 
-/**
- *
- * @author das
- */
+
 public class Main extends DoubleBufferApplet implements Runnable, KeyListener{
     
+    //constantes ambiente
     static final public int DELAY = 33;
     
-    static final public double ACELER = 1;
-    static final public double ATRITO = 0.09;
+    static final public float ACELER = 1.5f;
+    static final public float ATRITO = 0.87f;
     
+    //comandos
     static final public int UP = 0;
     static final public int DOWN = 1;
     static final public int LEFT = 2;
@@ -82,9 +81,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener{
     
     /** Init called in the very first applet`s run */
     public void init() {
-        
-        offScreen = createImage(200, 200);
-        
+                
         this.addKeyListener(this);
         
         //wait for all images get ready to show everthing synchronously
@@ -98,7 +95,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener{
     
     /** Paint all the images in the set, Applet`s default method */
     public void paint(Graphics g) {
-        g.drawImage(sphereImage, sphere.getX(), sphere.getY(), this);
+        g.drawImage(sphereImage, (int) sphere.getX(), (int) sphere.getY(), this);
     }
 
     /** Thread method for the game Loop */

@@ -2,9 +2,6 @@
  * Esfera.java
  *
  * Created on April 22, 2007, 11:55 AM
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
  */
 
 package labirinto;
@@ -12,16 +9,13 @@ package labirinto;
 import java.awt.*;
 import java.applet.*;
 
-/**
- *
- * @author das
- */
+
 public class Esfera {
     
-    private int x, y;
+    private float x, y;
 
-    private double velX;
-    private double velY;
+    private float velX;
+    private float velY;
     
     /** Creates a new instance of Esfera */
     public Esfera() {
@@ -30,10 +24,10 @@ public class Esfera {
     }
     
     /** Gets for the Sphere atributs */
-    public int getX() {
+    public float getX() {
         return x;
     }
-    public int getY() {
+    public float getY() {
         return y;
     }
     
@@ -48,16 +42,15 @@ public class Esfera {
         if(keyVector[Main.RIGHT])   velX += Main.ACELER;
         if(keyVector[Main.ESCAPE]) { x = y = 0;
         }
-        System.out.println(velX + "\t" + velY);
-
-        //Active "Atrito" constant
-        //velX *= Main.ATRITO;
-        //velY *= Main.ATRITO;
+        //System.out.println(velX + "\t" + velY);
         
         //Refresh new positions
         x += velX;
         y += velY;
         
+        //Active "Atrito" constant
+        velX *= Main.ATRITO;
+        velY *= Main.ATRITO;
     }
     
 }
