@@ -1,7 +1,4 @@
-// $Id$
-
 package labirinto;
-
 
 import java.awt.*;
 import java.applet.*;
