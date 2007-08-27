@@ -1,4 +1,4 @@
-package labirinto;
+package labirinto.core;
 
 import java.awt.*;
 import java.applet.*;
