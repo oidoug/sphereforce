@@ -12,13 +12,14 @@ package labirinto;
 /**
  * Imports to Main
  */
-import java.applet.Applet;
+import labirinto.core.DoubleBufferApplet;
+import labirinto.core.Esfera;
+
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Vector;
+import java.net.URL;
 
 
 public class Main extends DoubleBufferApplet implements Runnable, KeyListener{
@@ -34,9 +35,13 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener{
     static final public int DOWN = 1;
     static final public int LEFT = 2;
     static final public int RIGHT = 3;
-    static final public int ESCAPE = 4;
+    static final public int ENTER = 4;
+    static final public int ESCAPE = 5;
     
-    private boolean gameON;
+    static final public int NUM_OF_KEYS = 6;
+    
+    
+    private boolean gameOn;
     private Thread gameLoop;
     
     /** Vector [5] with:
@@ -47,31 +52,23 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener{
      *4 = ESCAPE
      */
     private boolean[] keyVector;
+   
+    /* instancia para os objetos utilizados durante o jogo */
+    private Esfera bluesphere;
+    private Esfera redsphere;
     
-    private Esfera sphere;
-    private Image sphereImage;
-    
-    private Image offScreen;
-    
-    /** Useless Main method */
-    public Main () {
-        
-        sphere = new Esfera();
-        
-        keyVector = new boolean[5];
-        
-    }
+    static public MediaTracker loading;
     
     /** Starts Applet with page`s requiriment */
     public void start() {
-        gameON = true;
+        gameOn = true;
         gameLoop = new Thread(this);
         gameLoop.start();
     }
     
     /** Stop Applet when user leave the page */
     public void stop() {
-        gameON = false;
+        gameOn = false;
     }
     
     /** Destroy Applet before leave the page */
@@ -80,31 +77,46 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener{
     }
     
     /** Init called in the very first applet`s run */
-    public void init() {
+    @Override
+public void init() {
+        
+        keyVector = new boolean[NUM_OF_KEYS];
                 
+        /* Controla as entradas do teclado */
         this.addKeyListener(this);
         
         //wait for all images get ready to show everthing synchronously
-        MediaTracker loading = new MediaTracker(this);
+        loading = new MediaTracker(this);
         
+        /* inicializa uma esfera que guardara a ref da sua imagem */
+        bluesphere = new Esfera(getImage(getDocumentBase(), "EsferaAzul.png"));
         
-        sphereImage = getImage(getDocumentBase(), "Esfera.png");
-        loading.addImage(sphereImage, 0);
-        
+        /* inicializa uma esfera que guardara a ref da sua imagem */
+        redsphere = new Esfera(getImage(getDocumentBase(), "EsferaVermelha.png"));
     }
     
     /** Paint all the images in the set, Applet`s default method */
     public void paint(Graphics g) {
-        g.drawImage(sphereImage, (int) sphere.getX(), (int) sphere.getY(), this);
+        if (gameOn) {
+            bluesphere.paint(g);
+            redsphere.paint(g);
+        }
     }
 
     /** Thread method for the game Loop */
     public void run() {
+        /* apresenta logos dos developers e outros e do jogo */
+        logos();
+        
+        /* mostra menu principal, conf de velocidade, dificuldade e tamanho tela */
+        menu();
+        
         long startTime;
         startTime = System.currentTimeMillis();
         
         while(Thread.currentThread() == gameLoop) {
-            sphere.refresh(keyVector);
+            bluesphere.refresh(keyVector);
+            //sphereOther.refresh();
             repaint();
             try {
                 startTime += DELAY;
@@ -133,8 +145,11 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener{
         if(keyEvent.getKeyCode() == keyEvent.VK_RIGHT) {
             keyVector[RIGHT] = true;
         }
+        if(keyEvent.getKeyCode() == keyEvent.VK_ENTER) {
+            keyVector[ENTER] = true;
+        }
         if(keyEvent.getKeyCode() == keyEvent.VK_ESCAPE) {
-            keyVector[ESCAPE] = true;        
+            keyVector[ESCAPE] = true;
         }
     }
     
@@ -151,6 +166,9 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener{
         }
         if(keyEvent.getKeyCode() == keyEvent.VK_RIGHT) {
             keyVector[RIGHT] = false;
+        }
+        if(keyEvent.getKeyCode() == keyEvent.VK_ENTER) {
+            keyVector[ENTER] = false;
         }
         if(keyEvent.getKeyCode() == keyEvent.VK_ESCAPE) {
             keyVector[ESCAPE] = false;
