@@ -7,12 +7,13 @@
 package labirinto.core;
 
 import java.net.DatagramSocket;
+import java.net.Socket;
 import labirinto.Main;
 
 public class Conection {
     
-    private DatagramSocket server;
-    private DatagramSocket client;
+    private DatagramSocket connUDP;
+    private Socket connTCP;
     
     /** Creates a new instance of Conection */
     public Conection() {

@@ -20,7 +20,6 @@ public class Esfera {
     
     private Image sphereImage;
     
-    private Conection conn;
     
     /** Creates a new instance of Esfera */
     public Esfera(Image bah) {
@@ -30,7 +29,6 @@ public class Esfera {
         sphereImage = bah;
         Main.loading.addImage(sphereImage, 0);
         
-        conn = new Conection();
     }
     
    
@@ -56,7 +54,7 @@ public class Esfera {
     /** Refresh all the sphere content based on data received from socket
      *  connection
      */
-    public void refresh() {
+    public void refresh(Conection conn) {
         refresh(conn.getKeys());
     }
     
