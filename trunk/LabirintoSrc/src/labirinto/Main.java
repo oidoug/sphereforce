@@ -115,6 +115,9 @@ public void init() {
         
         /* inicializa uma esfera que guardara a ref da sua imagem */
         redsphere = new Esfera(getImage(getDocumentBase(), "EsferaVermelha.png"));
+        
+        /* start a conection */
+        conn = new Conection();
     }
     
     /** Paint all the images in the set, Applet`s default method */
@@ -163,7 +166,7 @@ public void run() {
         startTime = System.currentTimeMillis();
         
         while(Thread.currentThread() == gameLoop) {
-            this.repaint();
+            repaint();
             try {
                 startTime += DELAY;
                 Thread.sleep(Math.max(0, startTime - System.currentTimeMillis()));

@@ -13,6 +13,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 /**
  *
@@ -22,7 +23,7 @@ class Logo implements Runnable {
 
     private Main applet;
 
-    private LinkedList<Image> logos;
+    private LinkedList logos;
 
     private Graphics g;
 
@@ -30,11 +31,12 @@ class Logo implements Runnable {
 
     public Logo(Main applet) {
         this.applet = applet;
-        logos = new LinkedList<Image>();
+        logos = new LinkedList();
         logoThread = new Thread(this);
     }
 
-    public void addLogo(Image logo) {
+    @SuppressWarnings("unchecked")
+public void addLogo(Image logo) {
         if (!logos.add(logo)) {
             System.err.println("erro: Logo<imagem> nao foi adicionado.");
         }
@@ -45,7 +47,7 @@ class Logo implements Runnable {
         this.g = g;
         try {
             logoThread.start();
-        } catch (Exception e) {
+        } catch (IllegalThreadStateException e) {
             System.err.println("erro: " + e.getMessage());
             e.printStackTrace();
         }
@@ -64,9 +66,9 @@ class Logo implements Runnable {
         long stopTime;
         long startTime;
 
-        Iterator it;
+        ListIterator it;
 
-        for (it = logos.iterator(); it.hasNext();) {
+        for (it = logos.listIterator(); it.hasNext();) {
             stopTime = 100;
             startTime = System.currentTimeMillis();
 
