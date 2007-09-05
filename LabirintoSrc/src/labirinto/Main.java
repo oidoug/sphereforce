@@ -12,14 +12,16 @@ package labirinto;
 /**
  * Imports to Main
  */
-import labirinto.core.DoubleBufferApplet;
-import labirinto.core.Esfera;
-
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import labirinto.core.Conection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import labirinto.core.*;
+import labirinto.core.Buraco;
+
 
 
 public class Main extends DoubleBufferApplet implements Runnable, KeyListener{
@@ -64,13 +66,19 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener{
     /* instancia para os objetos utilizados durante o jogo */
     private Esfera bluesphere;
     private Esfera redsphere;
+    private Buraco[] listaBuraco;
     
-    /* instancias das imagens dos logos a serem exibidos */
+    /* classe de logo e menu */
     private Logo logoscreen;
+    private Menu menuscreen;
+    
     
     static public MediaTracker loading;
     
     private Conection conn;
+    private boolean servidor;
+    
+    private Mapa fase01;
     
     /** Starts Applet with page`s requiriment */
     @Override
@@ -94,40 +102,129 @@ public void stop() {
     /** Init called in the very first applet`s run */
     @Override
 public void init() {
+        try {
+
+            //set applet window size
+            this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+            keyVector = new boolean[NUM_OF_KEYS];
+
+            /* Controla as entradas do teclado */
+            this.addKeyListener(this);
+
+            //wait for all images get ready to show everthing synchronously
+            loading = new java.awt.MediaTracker(this);
+
+            initGame();
+
+            initConn();
+
+            loading.waitForAll();
+            
+        } catch (InterruptedException ex) {
+            Logger.getLogger("global").log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void initGame() {
+        /* inicializa mapa */
+        fase01 = new Mapa();       
         
-        //set applet window size
-        this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        /* in,icializa uma esfera que guardara a ref da sua imagem */
+        bluesphere = new Esfera(getImage(getDocumentBase(), "EsferaAzul.png"),100,100);
+        fase01.addObject(bluesphere);
         
-        keyVector = new boolean[NUM_OF_KEYS];
-                
-        /* Controla as entradas do teclado */
-        this.addKeyListener(this);
+        /* inicializa uma esfera que guardara a ref da sua imagem */
+        redsphere = new Esfera(getImage(getDocumentBase(), "EsferaVermelha.png"),100,200);
+        fase01.addObject(redsphere);
         
-        //wait for all images get ready to show everthing synchronously
-        loading = new MediaTracker(this);
+        // pega imagem para os buracos
+        fase01.addObject(getImage(getDocumentBase(), "Buraco.png"));
         
+        // pega imagem para os blocos das barras
+        fase01.addObject(getImage(getDocumentBase(), "Bloco.png"));
+    }
+    
+    /**
+     * initMenu() inicializa as imagens para a chamada do menu interativo
+     * 
+     */
+    private void initMenu() {
         /* intantiate the logo object and add a new logo */
         logoscreen = new Logo(this);
         logoscreen.addLogo(getImage(getDocumentBase(), "qua.png"));
+        logoscreen.addLogo(getImage(getDocumentBase(), "barigada.png"));
         
-        /* inicializa uma esfera que guardara a ref da sua imagem */
-        bluesphere = new Esfera(getImage(getDocumentBase(), "EsferaAzul.png"));
-        
-        /* inicializa uma esfera que guardara a ref da sua imagem */
-        redsphere = new Esfera(getImage(getDocumentBase(), "EsferaVermelha.png"));
-        
-        /* start a conection */
-        conn = new Conection();
+        /* instantiate the button image, the background and game logo */
+        menuscreen = new Menu(this);
+        menuscreen.setImages(getImage(getDocumentBase(), "Background.png"),
+                             getImage(getDocumentBase(), "Title.png"),
+                             getImage(getDocumentBase(), "Buttom.png"));
+    }
+    
+    /**
+     * initConn() inicializa a conexao como servidor ou cliente
+     * 
+     */
+    private void initConn() {
+                /* starts a conection */
+        String ip = new String("localhost");
+        servidor = true;
+//        servidor = false;
+        //descomentar caso for executar o cliente
+        // passar o ip do servidor na construcao do objeto conn
+//        try {
+//            conn = new Conection(ip);
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//        }
     }
     
     /** Paint all the images in the set, Applet`s default method */
     public void paint(Graphics g) {
-
+        
         // check the actual application's state and update it
         switch (state) {
         case GAME_ON:
-            bluesphere.refresh(keyVector);
-            redsphere.refresh(conn);
+            /* sobre a conexao:
+             *
+             * o servidor sempre ficara esperando as coordenadas
+             * do cliente e somente depois envia as dele.
+             *
+             * ja o cliente envia primeiro e depois recebe as
+             * coordenadas do servidor
+             *
+             */
+            DataGame data = new DataGame();
+            data.setKeyVector(keyVector);
+            
+            if (servidor){
+//                redsphere.refresh(conn);
+                bluesphere.refresh(keyVector, redsphere);
+                
+                try {
+                    conn.Send(data);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                
+            }
+            else {
+                redsphere.refresh(keyVector, bluesphere);
+                
+                try {
+                    conn.Send(data);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }           
+                bluesphere.refresh(conn);
+                
+            }
+            
+            //colisao = new Collision(bluesphere,redsphere,listaBuraco);
             
             bluesphere.paint(g);
             redsphere.paint(g);
@@ -155,7 +252,7 @@ public void init() {
     }
 
     /** Thread method for the game Loop */
-    @Override
+
 public void run() {
         /* apresenta logos dos developers e outros e do jogo */       
         /* mostra menu principal, conf de velocidade, dificuldade e tamanho tela */
@@ -164,6 +261,7 @@ public void run() {
         
         long startTime;
         startTime = System.currentTimeMillis();
+        
         
         while(Thread.currentThread() == gameLoop) {
             repaint();
@@ -177,7 +275,7 @@ public void run() {
         }
     }
     
-    @Override
+
 public void keyTyped(KeyEvent keyEvent) {
     }
 
@@ -204,7 +302,7 @@ public void keyTyped(KeyEvent keyEvent) {
     }
     
     /** KeyReleased listener */
-    @Override
+
 public void keyReleased(KeyEvent keyEvent) {
         if(keyEvent.getKeyCode() == KeyEvent.VK_UP) {
             keyVector[UP] = false;
@@ -225,5 +323,6 @@ public void keyReleased(KeyEvent keyEvent) {
             keyVector[ESCAPE] = false;
         }  
     }
+
 
 }

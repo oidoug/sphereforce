@@ -10,13 +10,14 @@
 package labirinto.core;
 
 import java.nio.ByteBuffer;
+import java.io.Serializable;
 import labirinto.Main;
 
 /**
  *
  * @author das
  */
-public class DataGame {
+public class DataGame implements Serializable {
     
     private float x;
     private float y;
@@ -28,25 +29,7 @@ public class DataGame {
         x = -1;
         y = -1;
     }
-    
-    public byte[] getBytes() {
         
-        //@TODO: tem q inventar um jeito de converter esses atributos em um byte[]
-        // e depois voltar os valores assim como em DataChat.
-        byte byteVector[] = new byte[8 + Main.NUM_OF_KEYS];
-        
-        byteVector[0] = new Float(x).byteValue();
-        
-        return byteVector;
-    }
-    
-    /* setData recupera as informações do vetor de bytes para a estrutura de
-     * dados DataGame instanciada
-     */
-    public void setData(byte byteVector[]) {
-        
-    }
-    
     /* getX retorna o valor float de x no momento */
     public float getX() {
         return x;
@@ -62,19 +45,8 @@ public class DataGame {
         return keyVector;
     }
     
-    /**
-     * Converte o vetor byte[] para um int a partir do valor offset dado
-     *
-     * @param b The byte array
-     * @param offset The array offset
-     * @return The integer
-     */
-    private static int byteArrayToInt(byte[] b, int offset) {
-        int value = 0;
-        for (int i = 0; i < 4; i++) {
-            int shift = (4 - 1 - i) * 8;
-            value += (b[i + offset] & 0x000000FF) << shift;
-        }
-        return value;
+    public void setKeyVector(boolean[] vector){
+        keyVector = vector;
     }
+    
 }

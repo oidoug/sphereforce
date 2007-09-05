@@ -11,7 +11,6 @@ package labirinto;
 
 import java.awt.Graphics;
 import java.awt.Image;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -19,37 +18,59 @@ import java.util.ListIterator;
  *
  * @author Douglas Schmidt
  */
-class Logo implements Runnable {
+class Logo {
+
+    private final long OUT_TIME = 100;
+
+    private long stopTime;
+    private long startTime;
+    private boolean novoLogo = true;
 
     private Main applet;
 
-    private LinkedList logos;
-
-    private Graphics g;
-
-    private Thread logoThread;
+    private LinkedList<Image> logos;
 
     public Logo(Main applet) {
         this.applet = applet;
-        logos = new LinkedList();
-        logoThread = new Thread(this);
+        logos = new LinkedList<Image>();
     }
 
-    @SuppressWarnings("unchecked")
-public void addLogo(Image logo) {
-        if (!logos.add(logo)) {
-            System.err.println("erro: Logo<imagem> nao foi adicionado.");
+    @SuppressWarnings(value = "unchecked")
+    public void addLogo(Image logo) {
+        try {
+            logos.add(logo);
+        } catch (ExceptionInInitializerError ex) {
+            System.err.println("erro: init list " + ex.getMessage());
         }
-        Main.loading.addImage(logo, 0);
     }
 
     public void paint(Graphics g) {
-        this.g = g;
-        try {
-            logoThread.start();
-        } catch (IllegalThreadStateException e) {
-            System.err.println("erro: " + e.getMessage());
-            e.printStackTrace();
+
+//        for (Image logo : logos) {
+        if (novoLogo) {
+            stopTime = OUT_TIME;
+            startTime = System.currentTimeMillis();
+        }
+//            g.drawImage(logo, 0, 0, null);
+//
+//            if(this.applet.state != Main.LOGO) break;
+//
+//            while (this.applet.state == Main.LOGO) {
+//                if (stopTime == System.currentTimeMillis() - startTime) {
+//                    break;
+//                }
+//            }
+//
+//        }
+        if (stopTime >= System.currentTimeMillis() - startTime) {
+            g.drawImage(logos.getFirst(), 0, 0, null);
+            novoLogo = false;
+        } else if (logos.isEmpty()) {
+            // logo deve mudar o estado para MENU, mas ainda nao foi implementado
+            applet.state = Main.MENU;
+        } else {
+            logos.removeFirst();
+            novoLogo = true;
         }
     }
 
@@ -57,29 +78,6 @@ public void addLogo(Image logo) {
      * stop to showing the logos and jump to menu option
      */
     public void stop() {
-        logoThread.interrupt();
-    }
-
-    public void run() {
-
-        applet.state = Main.LOGO;
-        long stopTime;
-        long startTime;
-
-        ListIterator it;
-
-        for (it = logos.listIterator(); it.hasNext();) {
-            stopTime = 100;
-            startTime = System.currentTimeMillis();
-
-            while (logoThread.isAlive()) {
-                if (stopTime == System.currentTimeMillis() - startTime) {
-                    break;
-                }
-                g.drawImage((Image) it.next(), 0, 0, null);
-            }
-        }
-        // logo deve mudar o estado para MENU, mas ainda nao foi implementado
-        applet.state = Main.GAME_ON;
+        this.applet.state = Main.MENU;
     }
 }
