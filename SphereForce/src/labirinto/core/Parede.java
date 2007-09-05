@@ -90,9 +90,52 @@ public class Parede {
         
     }
     
-    public boolean colideCom(Esfera esfera) {
-        // deve-se tratar a colisao com a esfera
+    public void colideCom(Esfera esfera) {
         
-        return false;
+        float tLateral, tVertical;
+        
+        if (isVertical()){
+         tLateral = H;
+         tVertical = tamanho * W;
+        }
+        else {
+            tLateral = tamanho * H;
+            tVertical = W;
+        }
+        
+        if ((esfera.getY() > y - esfera.getRaio()) &&
+                (esfera.getY() < y + tVertical + esfera.getRaio()) ) {
+           
+            //verifica se colide na parte lateral esquerda da parede
+            if ( (esfera.getX() - x) < (esfera.getX() + 2*esfera.getRaio()) ){
+                esfera.setVelX(-esfera.getVelX());
+                esfera.setX(x+2*esfera.getRaio());
+            }
+            
+            //colisao com o lado direito da parede
+            else if ((x + tLateral + esfera.getRaio()) > esfera.getX()){
+                esfera.setVelX(-esfera.getVelX());
+                esfera.setX(x);
+            }
+        }
+        
+        if ((esfera.getX() > x - esfera.getRaio()) &&
+                (esfera.getX() < x + tLateral + esfera.getRaio()) ) {
+            
+            //colisao com a parte superior da parede
+            if ( (esfera.getY() - y) < (esfera.getY() + 2*esfera.getRaio()) ) {
+                esfera.setVelY(-esfera.getVelY());
+                esfera.setY(y - 2*esfera.getRaio());
+            }
+            
+            //colisao com a parte inferior da parede
+            else if ((y + tVertical + esfera.getRaio()) > esfera.getY()) {
+                esfera.setVelY(-esfera.getVelY());
+                esfera.setY(y);
+            }
+        }
+        
+        
+        
     }
 }
