@@ -122,17 +122,18 @@ public class Buraco {
         //implementei supondo q a marca eh um retangulo com altura e largura definidas
         //assim verifico as distancias do ponto central da bola com as laterais da maca
         
-        boolean colide = false;
+        // tirei a bool colide pq era desnecessaria. Se colidir em um dos testes
+        // nao precisa checar com os outros
         
         if ((y > marca.getY() - raio) &&
                 (y < marca.getY() + marca.getH() + raio)){
            
             if ( (x - marca.getX()) < (x + 2*raio) ){
-                colide =  true;
+                return  true;
             }
             
             else if ((marca.getX() + marca.getW() + raio) > x){
-                colide = true;
+                return true;
             }
         }
         
@@ -140,14 +141,14 @@ public class Buraco {
                 (x < marca.getX() + marca.getW() + raio) ) {
             
             if ( (y - marca.getY()) < (y + 2*raio) ) {
-                colide = true;
+                return true;
             }
             
             else if ((marca.getY() + marca.getH() + raio) > y) {
-                colide = true;
+                return true;
             }
         }
         
-        return colide;
+        return false;
     }
 }
