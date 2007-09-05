@@ -21,6 +21,9 @@ import java.awt.event.KeyListener;
 public class Menu implements KeyListener {
     
     private final long OUT_TIME = 5000;
+    
+    private final int BackGW = 50;
+    private final int BackGH = 50;
 
     private Image background;
     private Image button;
@@ -57,9 +60,9 @@ public class Menu implements KeyListener {
             x = 0;
             while (x < Main.WINDOW_WIDTH) {
                 g.drawImage(background, x, y, null);
-                x = x + background.getWidth(null);
+                x = x + BackGW;
             }
-            y = y + background.getHeight(null);
+            y = y + BackGH;
         }
         while (this.applet.state == Main.LOGO) {
             if (stopTime == System.currentTimeMillis() - startTime) {

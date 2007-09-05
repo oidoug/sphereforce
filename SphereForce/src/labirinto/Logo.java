@@ -38,7 +38,7 @@ class Logo {
     @SuppressWarnings(value = "unchecked")
     public void addLogo(Image logo) {
         try {
-            logos.add(logo);
+            logos.addLast(logo);
         } catch (ExceptionInInitializerError ex) {
             System.err.println("erro: init list " + ex.getMessage());
         }
@@ -46,11 +46,21 @@ class Logo {
 
     public void paint(Graphics g) {
 
-//        for (Image logo : logos) {
         if (novoLogo) {
             stopTime = OUT_TIME;
             startTime = System.currentTimeMillis();
         }
+        if (stopTime >= System.currentTimeMillis() - startTime && logos.isEmpty() == false) {
+            g.drawImage(logos.getFirst(), 0, 0, null);
+            novoLogo = false;
+        } else if (!logos.isEmpty()) {
+            logos.removeFirst();
+            novoLogo = true;
+        } else {
+            // logo deve mudar o estado para MENU, mas ainda nao foi implementado
+            applet.state = Main.MENU;
+        }
+//        for (Image logo : logos) {
 //            g.drawImage(logo, 0, 0, null);
 //
 //            if(this.applet.state != Main.LOGO) break;
@@ -62,16 +72,7 @@ class Logo {
 //            }
 //
 //        }
-        if (stopTime >= System.currentTimeMillis() - startTime) {
-            g.drawImage(logos.getFirst(), 0, 0, null);
-            novoLogo = false;
-        } else if (logos.isEmpty()) {
-            // logo deve mudar o estado para MENU, mas ainda nao foi implementado
-            applet.state = Main.MENU;
-        } else {
-            logos.removeFirst();
-            novoLogo = true;
-        }
+
     }
 
     /** Stop
