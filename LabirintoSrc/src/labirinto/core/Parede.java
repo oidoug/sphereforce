@@ -25,7 +25,10 @@ public class Parede {
     private int tamanho;
     // imagem do bloco
     private Image blocoimage;
-
+    
+    //tamanho das laterias de cada bloco
+    private float H;
+    private float W;
 
     // define orientacao da parede, se vertical entao vertical = true;
     private boolean vertical;
@@ -36,8 +39,20 @@ public class Parede {
         this.vertical = vertical;
         this.x = x;
         this.y = y;
+        
+        //colocar valores corretos
+        H = 20;
+        W = 20;
     }
 
+    public float getH(){
+        return H;
+    }
+    
+    public float getW(){
+        return W;
+    }
+    
     public int getTamanho() {
         return tamanho;
     }
