@@ -124,16 +124,17 @@ public class Buraco {
         
         // tirei a bool colide pq era desnecessaria. Se colidir em um dos testes
         // nao precisa checar com os outros
+        boolean colide = false;
         
         if ((y > marca.getY() - raio) &&
                 (y < marca.getY() + marca.getH() + raio)){
            
             if ( (x - marca.getX()) < (x + 2*raio) ){
-                return  true;
+                colide =  true;
             }
             
             else if ((marca.getX() + marca.getW() + raio) > x){
-                return true;
+                colide = true;
             }
         }
         
@@ -141,14 +142,14 @@ public class Buraco {
                 (x < marca.getX() + marca.getW() + raio) ) {
             
             if ( (y - marca.getY()) < (y + 2*raio) ) {
-                return true;
+                colide = true;
             }
             
             else if ((marca.getY() + marca.getH() + raio) > y) {
-                return true;
+                colide = true;
             }
         }
         
-        return false;
+        return colide;
     }
 }

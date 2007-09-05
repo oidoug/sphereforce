@@ -66,8 +66,34 @@ public class Marca {
     }
     
     public boolean colideCom(Esfera esfera){
-        // tratar colisao com esfera
-        return false;
+        
+        boolean colide = false;
+        
+        if ((esfera.getY() > y - esfera.getRaio()) &&
+                (esfera.getY() < y + H + esfera.getRaio())){
+           
+            if ( (esfera.getX() - x) < (esfera.getX() + 2*esfera.getRaio()) ){
+                colide =  true;
+            }
+            
+            else if ((x + W + esfera.getRaio()) > esfera.getX()){
+                colide = true;
+            }
+        }
+        
+        if ((esfera.getX() > x - esfera.getRaio()) &&
+                (esfera.getX() < x + W + esfera.getRaio()) ) {
+            
+            if ( (esfera.getY() - y) < (esfera.getY() + 2*esfera.getRaio()) ) {
+                colide = true;
+            }
+            
+            else if ((y + H + esfera.getRaio()) > esfera.getY()) {
+                colide = true;
+            }
+        }
+        
+        return colide;
     }
 
 }
