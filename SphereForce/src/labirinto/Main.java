@@ -213,11 +213,11 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
 //                redsphere.refresh(conn);
                     bluesphere.refresh(keyVector, redsphere);
 
-                    try {
-                        conn.Send(data);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        conn.Send(data);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
                 } else {
                     redsphere.refresh(keyVector, bluesphere);
 
