@@ -260,10 +260,10 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     }
     
     public boolean trataColisoes(){
-        bluesphere.trataBuracos(fase01.getBuracos());
-        redsphere.trataBuracos(fase01.getBuracos());
+        //bluesphere.trataBuracos(fase01.getBuracos());
+        //redsphere.trataBuracos(fase01.getBuracos());
         bluesphere.trataParedes(fase01.getParedes());
-        redsphere.trataParedes(fase01.getParedes());
+        //redsphere.trataParedes(fase01.getParedes());
         return false;
     }
 

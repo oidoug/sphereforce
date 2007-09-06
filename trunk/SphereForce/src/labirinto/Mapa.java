@@ -83,12 +83,12 @@ public class Mapa {
         return paredes;
     }
     public void gerarMapa() {
-        gerarBuracos();
+        //gerarBuracos();
         gerarParedes();
     }
 
     public void paint(Graphics g) {
-        /** BEGIN background */
+        /** BEGIN background 
         int x = 0;
         int y = 0;
 
@@ -100,13 +100,13 @@ public class Mapa {
             }
             y = y + BackGH;
         }
-        /* END background */
+         END background */
 
-        /* BEGIN buracos */
+        /* BEGIN buracos 
         for (Buraco hole : buracos) {
             hole.paint(g);
         }
-        /* END buracos */
+         END buracos */
 
         /* BEGIN paredes */
         for (Parede wall : paredes) {
@@ -150,10 +150,10 @@ public class Mapa {
     private void gerarParedes() {
         // a dona aranha, subui pela parede, venho a chuva forte e um granito atravessou seu crânio
         /* BEGIN laterais */
-        paredes.add(new Parede(blocoImg, 40, true, 0, TAMANHOBLOCO * 29));
-        paredes.add(new Parede(blocoImg, 30, false, 0, 0));
-        paredes.add(new Parede(blocoImg, 40, true, 0, 0));
-        paredes.add(new Parede(blocoImg, 30, false, TAMANHOBLOCO * 39, 0));
+        paredes.add(new Parede(blocoImg, 40, false, 0, TAMANHOBLOCO * 29,1));
+        paredes.add(new Parede(blocoImg, 30, true, 0, 0,2));
+        paredes.add(new Parede(blocoImg, 40, false, 0, 0,3));
+        paredes.add(new Parede(blocoImg, 30, true, TAMANHOBLOCO * 39, 0,4));
         /* END laterais */
         
         /* BEGIN labirinto */
@@ -162,10 +162,10 @@ public class Mapa {
     }
 
     private void labirinto01() {
-        paredes.add(new Parede(blocoImg, 20, false, TAMANHOBLOCO * 8, TAMANHOBLOCO));
-        paredes.add(new Parede(blocoImg, 20, false, TAMANHOBLOCO * 16, TAMANHOBLOCO * 10));
-        paredes.add(new Parede(blocoImg, 20, false, TAMANHOBLOCO * 24, TAMANHOBLOCO));
-        paredes.add(new Parede(blocoImg, 20, false, TAMANHOBLOCO * 31, TAMANHOBLOCO * 10));
+        paredes.add(new Parede(blocoImg, 20, true, TAMANHOBLOCO * 8, TAMANHOBLOCO,5));
+        paredes.add(new Parede(blocoImg, 20, true, TAMANHOBLOCO * 16, TAMANHOBLOCO * 10,6));
+        paredes.add(new Parede(blocoImg, 20, true, TAMANHOBLOCO * 24, TAMANHOBLOCO,7));
+        paredes.add(new Parede(blocoImg, 20, true, TAMANHOBLOCO * 31, TAMANHOBLOCO * 10,8));
     }
     
 
