@@ -271,7 +271,7 @@ public class Esfera {
         float cateto1 = hole.getX() - x;
         float cateto2 = hole.getY() - y;
         float distancia = (float) Math.sqrt(cateto1*cateto1 + cateto2*cateto2);
-        if (distancia < raio + hole.getRaio()) 
+        if (distancia < hole.getRaio()) 
             x = y = 100;
       }
     }
