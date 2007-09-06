@@ -39,7 +39,7 @@ public class Mapa {
     private Esfera redsphere;
     private Esfera bluesphere;
 
-    private final int NUM_BURACOS = 20;
+    private final int NUM_BURACOS = 50;
 
     public Mapa() {
         buracos = new LinkedList<Buraco>();
@@ -47,6 +47,7 @@ public class Mapa {
     }
 
     public void addObject(Object object) {
+        // super(gambis-java)!;
         if (object instanceof Esfera) {
             if (bluesphere != null) {
                 redsphere = (Esfera) object;
@@ -68,10 +69,10 @@ public class Mapa {
                 backgroundImg = (Image) object;
             }
         } else {
-            System.err.println("erro: Objeto nao valido.");
+            System.err.println("erro: Objeto nao valido ou ordem e inicialização incorreta.");
         }
     }
-    
+
     public void gerarMapa() {
         gerarBuracos();
         gerarParedes();
@@ -108,24 +109,32 @@ public class Mapa {
     private void gerarBuracos() {
         int randX;
         int randY;
+        boolean colide = false;
         for (int i = 0; i <= NUM_BURACOS; i++) {
-            randX = (int) Math.random();
-            randY = (int) Math.random();
+            randX = (int) (Main.WINDOW_WIDTH * Math.random());
+            randY = (int) (Main.WINDOW_HEIGHT * Math.random());
 
             Buraco hole = new Buraco(buracoImg, randX, randY);
 
-            if (!hole.colideCom(chegada) || !hole.colideCom(largada)) {
+            if (hole.colideCom(chegada) || hole.colideCom(largada)) {
+                colide = true;
+            } else {
                 for (Parede parede : paredes) {
-                    if (!hole.colideCom(parede)) {
-                        buracos.add(new Buraco(buracoImg, randX, randY));
+                    if (hole.colideCom(parede)) {
+                        colide = true;
                     }
                 }
+            }
+            if (!colide) {
+                buracos.add(new Buraco(buracoImg, randX, randY));
             }
         }
     }
 
+
     private void gerarParedes() {
         // a dona aranha, subui pela parede, venho a chuva forte e um granito atravessou seu crânio
         paredes.add(new Parede(blocoImg, 5, true, 400, 100));
+        paredes.add(new Parede(blocoImg, 15, false, 0, 580));
     }
 }

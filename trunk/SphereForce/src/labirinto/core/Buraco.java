@@ -21,7 +21,7 @@ import java.applet.*;
 public class Buraco {
     
     private Image buracoImage;
-    private float x, y;
+    private int x, y;
     private int caiu;
     private float raio;
     
@@ -41,7 +41,7 @@ public class Buraco {
     public float getRaio(){
         return raio;
     }
-    public void setXY(float valorx, float valory){
+    public void setXY(int valorx, int valory){
         x = valorx;
         y = valory;
     }
@@ -78,38 +78,28 @@ public class Buraco {
     // o buraco ao ser construido nao pode estar no mesmo lugar que a parede
     public boolean colideCom(Parede parede) {
         
-        float tLateral, tVertical;
-        if (parede.isVertical()){
-         tLateral = parede.getH();
-         tVertical = parede.getTamanho() * parede.getW();
-        }
-        else {
-            tLateral = parede.getTamanho() * parede.getH();
-            tVertical = parede.getW();
-        }
-        
         boolean colide = false;
         
         if ((y > parede.getY() - raio) &&
-                (y < parede.getY() + tVertical + raio)){
+                (y < parede.getY() + parede.getAbsTamanhoH() + raio)){
            
             if ( (x - parede.getX()) < (x + 2*raio) ){
                 colide =  true;
             }
             
-            else if ((parede.getX() + tLateral + raio) > x){
+            else if ((parede.getX() + parede.getAbsTamanhoW() + raio) > x){
                 colide = true;
             }
         }
         
         if ((x > parede.getX() - raio) &&
-                (x < parede.getX() + tLateral + raio) ) {
+                (x < parede.getX() + parede.getAbsTamanhoW() + raio) ) {
             
             if ( (y - parede.getY()) < (y + 2*raio) ) {
                 colide = true;
             }
             
-            else if ((parede.getY() + tVertical + raio) > y) {
+            else if ((parede.getY() + parede.getAbsTamanhoH() + raio) > y) {
                 colide = true;
             }
         }
