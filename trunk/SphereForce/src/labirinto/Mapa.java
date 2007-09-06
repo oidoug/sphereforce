@@ -39,7 +39,7 @@ public class Mapa {
     private Esfera redsphere;
     private Esfera bluesphere;
 
-    private final int NUM_BURACOS = 50;
+    private final int NUM_BURACOS = 6;
 
     public Mapa() {
         buracos = new LinkedList<Buraco>();
@@ -110,7 +110,8 @@ public class Mapa {
         int randX;
         int randY;
         boolean colide = false;
-        for (int i = 0; i <= NUM_BURACOS; i++) {
+        int nBuracosOk = 0;
+        do {
             randX = (int) (Main.WINDOW_WIDTH * Math.random());
             randY = (int) (Main.WINDOW_HEIGHT * Math.random());
 
@@ -127,8 +128,9 @@ public class Mapa {
             }
             if (!colide) {
                 buracos.add(new Buraco(buracoImg, randX, randY));
+                nBuracosOk++;
             }
-        }
+        } while (nBuracosOk < NUM_BURACOS);
     }
 
 
