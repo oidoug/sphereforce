@@ -39,7 +39,7 @@ public class Mapa {
     private Esfera redsphere;
     private Esfera bluesphere;
 
-    private final int NUM_BURACOS = 2;
+    private final int NUM_BURACOS = 3;
 
     public Mapa() {
         buracos = new LinkedList<Buraco>();
@@ -104,6 +104,11 @@ public class Mapa {
             wall.paint(g);
         }
         /* END paredes */
+        
+        /* BEGIN marcas */
+        largada.paint(g);
+        chegada.paint(g);
+        /* END marcas */
     }
 
     private void gerarBuracos() {
@@ -133,11 +138,19 @@ public class Mapa {
         } while (nBuracosOk < NUM_BURACOS);
     }
 
-
     private void gerarParedes() {
         // a dona aranha, subui pela parede, venho a chuva forte e um granito atravessou seu crânio
-        paredes.add(new Parede(blocoImg, 5, true, 400, 100));
-        paredes.add(new Parede(blocoImg, 15, true, 0, 580));
+        /* BEGIN laterais */
+        paredes.add(new Parede(blocoImg, 40, true, 0, 580));
         paredes.add(new Parede(blocoImg, 30, false, 0, 0));
+        paredes.add(new Parede(blocoImg, 40, true, 0, 0));
+        paredes.add(new Parede(blocoImg, 30, false, 780, 0));
+        /* END laterais */
+        
+        /* BEGIN labirinto */
+        paredes.add(new Parede(blocoImg, 5, true, 400, 100));
+        /* END labirinto */
     }
+    
+
 }

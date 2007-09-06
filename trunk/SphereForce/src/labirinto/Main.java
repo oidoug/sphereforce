@@ -48,6 +48,9 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public static final int MENU = 2;
     public static final int LOGO = 3;
     public static final int EXIT = 4;
+    
+    public static final int INIT_POINT_X = 50;
+    public static final int INIT_POINT_Y = 25;
 
     public int state;
 
@@ -129,18 +132,18 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         fase01 = new Mapa();
 
         /* in,icializa uma esfera que guardara a ref da sua imagem */
-        bluesphere = new Esfera(getImage(getDocumentBase(), "EsferaAzul.png"), 100, 100);
+        bluesphere = new Esfera(getImage(getDocumentBase(), "EsferaAzul.png"), 50, 50);
         fase01.addObject(bluesphere);
 
         /* inicializa uma esfera que guardara a ref da sua imagem */
-        redsphere = new Esfera(getImage(getDocumentBase(), "EsferaVermelha.png"), 100, 200);
+        redsphere = new Esfera(getImage(getDocumentBase(), "EsferaVermelha.png"), 75, 50);
         fase01.addObject(redsphere);
         
         // adiciona o inicio
-        fase01.addObject(new Marca(getImage(getDocumentBase(), "Inicio.png"), 0, 0));
+        fase01.addObject(new Marca(getImage(getDocumentBase(), "Inicio.png"), 40, 40));
         
         // adiciona o termino
-        fase01.addObject(new Marca(getImage(getDocumentBase(), "Fim.png"), WINDOW_WIDTH - 50, WINDOW_HEIGHT - 25));
+        fase01.addObject(new Marca(getImage(getDocumentBase(), "Fim.png"), WINDOW_WIDTH - 40 - 100 , WINDOW_HEIGHT - 40 - 50));
         
         // pega imagem para os buracos
         fase01.addObject(getImage(getDocumentBase(), "Buraco.png"));
