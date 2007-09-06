@@ -40,6 +40,8 @@ public class Mapa {
     private Esfera bluesphere;
 
     private final int NUM_BURACOS = 3;
+    
+    private final int TAMANHOBLOCO = 20; 
 
     public Mapa() {
         buracos = new LinkedList<Buraco>();
@@ -141,15 +143,22 @@ public class Mapa {
     private void gerarParedes() {
         // a dona aranha, subui pela parede, venho a chuva forte e um granito atravessou seu crânio
         /* BEGIN laterais */
-        paredes.add(new Parede(blocoImg, 40, true, 0, 580));
+        paredes.add(new Parede(blocoImg, 40, true, 0, TAMANHOBLOCO * 29));
         paredes.add(new Parede(blocoImg, 30, false, 0, 0));
         paredes.add(new Parede(blocoImg, 40, true, 0, 0));
-        paredes.add(new Parede(blocoImg, 30, false, 780, 0));
+        paredes.add(new Parede(blocoImg, 30, false, TAMANHOBLOCO * 39, 0));
         /* END laterais */
         
         /* BEGIN labirinto */
-        paredes.add(new Parede(blocoImg, 5, true, 400, 100));
+        labirinto01();
         /* END labirinto */
+    }
+
+    private void labirinto01() {
+        paredes.add(new Parede(blocoImg, 20, false, TAMANHOBLOCO * 8, TAMANHOBLOCO));
+        paredes.add(new Parede(blocoImg, 20, false, TAMANHOBLOCO * 16, TAMANHOBLOCO * 10));
+        paredes.add(new Parede(blocoImg, 20, false, TAMANHOBLOCO * 24, TAMANHOBLOCO));
+        paredes.add(new Parede(blocoImg, 20, false, TAMANHOBLOCO * 31, TAMANHOBLOCO * 10));
     }
     
 
