@@ -266,7 +266,7 @@ public class Esfera {
 
     }
 
-    public void colideCom(LinkedList<Buraco> buracos) {
+    public void trataBuracos(LinkedList<Buraco> buracos) {
       for (Buraco hole : buracos){
         float cateto1 = hole.getX() - x;
         float cateto2 = hole.getY() - y;
@@ -276,7 +276,7 @@ public class Esfera {
       }
     }
     
-    public void colideCom(LinkedList<Parede> paredes) {
+    public void trataParedes(LinkedList<Parede> paredes) {
      for (Parede hole : paredes) {
          
         if ((y > hole.getY() - raio) && (y < y + hole.getAbsTamanhoH() + raio)) {
