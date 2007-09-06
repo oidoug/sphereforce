@@ -160,7 +160,7 @@ public class Esfera {
         if (colidiu) {
             float dx = inimiga.getX() - x;
             float dy = inimiga.getY() - y;
-            float distancia = this.getDistancia();
+            float distancia = this.getDistancia(x, y, inimiga.getX(), inimiga.getY());
             float ax = dx / distancia; //   dx/d
             float ay = dy / distancia; //   dy/d
             float va1 = velX * ax + velY * ay;
@@ -186,7 +186,7 @@ public class Esfera {
     // checa se esferas colidiram
     public boolean verificaColisaoBolas() {
 
-        float distancia = getDistancia();
+        float distancia = getDistancia(x, y, inimiga.getX(), inimiga.getY());
 
         if (distancia <= (raio*2)) {
             return true;
@@ -196,10 +196,10 @@ public class Esfera {
     }
 
     // retorna distancia entre as esferas
-    public float getDistancia() {
+    public float getDistancia(float x1, float y1, float x2, float y2) {
 
-        float cateto1 = inimiga.getY() - y;
-        float cateto2 = inimiga.getX() - x;
+        float cateto1 = y2 - y1;
+        float cateto2 = x2 - x1;
         return (float) Math.sqrt(cateto1*cateto1 + cateto2*cateto2);
     }
 
@@ -278,43 +278,66 @@ public class Esfera {
     
     public void trataParedes(LinkedList<Parede> paredes) {
      for (Parede hole : paredes) {
+         //nao eh pra acontece nada porraaaa!!!!
          
-        if ((y > hole.getY() - raio) && (y < hole.getY() + hole.getAbsTamanhoH() + raio)) {
-
-            //verifica se colide na parte lateral esquerda da parede
-            if ( x < hole.getX()){
-                if ((hole.getX() - x) < (x + 2 * raio)) {
-                    velX = -velX;
-                    x = hole.getX() + 2*raio;
-                }
-            }
-            //verifica se colide na parte lateral direita da parede
-            if ( x > hole.getX() + raio){
-                if ((hole.getX() + hole.getAbsTamanhoW() ) > x) {
-                    velX = -velX;
-                    x = hole.getX() + hole.getAbsTamanhoW();
-                }
-            }
-        }     
-        if ((x > hole.getX() - raio) && (x < hole.getX() + hole.getAbsTamanhoW() + raio)) {
-
-            //colisao com a parte superior da parede
-            if (y < hole.getY()) {
-                if ((hole.getY() - y) < (y + 2 * raio)) {
+        if (    (y > hole.getY() - raio) && 
+                (y < hole.getY() + hole.getAbsTamanhoH()) &&
+                (x >= hole.getX() - raio ) && 
+                (x <= hole.getX() + hole.getAbsTamanhoW()  )     ) {
+                
+                float xb = x + raio;
+                float yb = y + raio;
+                
+                float m1x = hole.getAbsTamanhoW() / 2;
+                float m1y = hole.getY();
+                
+                float m2x = hole.getX();
+                float m2y = hole.getAbsTamanhoH() / 2;
+                
+                float m3x = hole.getAbsTamanhoW() / 2;
+                float m3y = hole.getY() + hole.getAbsTamanhoH();
+                
+                float m4x = hole.getX() + hole.getAbsTamanhoW();
+                float m4y = hole.getAbsTamanhoH() / 2;
+                
+                float d1 = getDistancia(xb, yb, m1x, m1y);
+                float d2 = getDistancia(xb, yb, m2x, m2y);
+                float d3 = getDistancia(xb, yb, m3x, m3y);
+                float d4 = getDistancia(xb, yb, m4x, m4y);
+                
+                float menord = d1;
+                
+                if (menord > d2) menord = d2;
+                if (menord > d3) menord = d3;
+                if (menord > d4) menord = d4;
+                
+                if (menord == d1){
+                    System.out.printf("\n bateu em cima da parede: %d",hole.getId());
                     velY = -velY;
                     y = hole.getY() - 2*raio;
                 }
-            }
-            
-            //colisao com a parte inferior da parede
-            if(y > hole.getY() + raio) {
-                if ((hole.getY() + hole.getAbsTamanhoH() ) > y) {
+                
+                if (menord == d2){
+                    System.out.printf("\n bateu a esquerda da parede: %d",hole.getId());
+                    velX = -velX;
+                    x = hole.getX() - 2*raio;
+                }
+                
+                if (menord == d3){
+                    System.out.printf("\n bateu em baixo da parede: %d",hole.getId());
                     velY = -velY;
                     y = hole.getY() + hole.getAbsTamanhoH();
                 }
-            }
-         
-        }
-   }
-  }
+                
+                if (menord == d4){
+                    System.out.printf("\n bateu a direita da parede: %d",hole.getId());
+                    velX = -velX;
+                    x = hole.getX() + hole.getAbsTamanhoW();
+                }
+                
+        } 
+        
+     }//for
+  
+    }//trataParedes
 }

@@ -35,27 +35,33 @@ public class Parede {
     private int blocoH;
     private int blocoW;
 
+    private int id;
     // define orientacao da parede, se vertical entao vertical = true;
     private boolean vertical;
 
-    public Parede(Image blocoimage, int tamanho, boolean vertical, float x, float y) {
+    public Parede(Image blocoimage, int tamanho, boolean vertical, float x, float y, int ide) {
         this.blocoimage = blocoimage;
         this.tamanho = tamanho;
         this.vertical = vertical;
         this.x = x;
         this.y = y;
+        this.id = ide;
 
         //colocar valores corretos
         blocoH = 20;
         blocoW = 20;
 
         if (vertical) {
-            absTamanhoW = tamanho * blocoW;
-            absTamanhoH = blocoH;
-        } else {
             absTamanhoW = blocoW;
             absTamanhoH = tamanho * blocoH;
+        } else {
+            absTamanhoW = tamanho *blocoW;
+            absTamanhoH = blocoH;
         }
+    }
+    
+    public int getId(){
+        return id;
     }
 
     public int getH() {
@@ -110,9 +116,9 @@ public class Parede {
     public void paint(Graphics g) {
         for (int i = 0; i < tamanho; i++) {
             if (vertical) {
-                g.drawImage(blocoimage,(int) x + (i * blocoH),(int) y, null);
+                g.drawImage(blocoimage,(int) x,(int) y + (i * blocoH), null);
             } else {
-                g.drawImage(blocoimage,(int) x,(int) y + (i * blocoW), null);
+                g.drawImage(blocoimage,(int) x + (i * blocoW),(int) y, null);
             }
         }
     }
