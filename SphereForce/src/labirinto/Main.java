@@ -28,8 +28,6 @@ import labirinto.core.*;
 public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
 
     //constantes ambiente
-    public static final int WINDOW_WIDTH = 800;
-    public static final int WINDOW_HEIGHT = 600;
     public static final int DELAY = 33;
 
     public static final float ACELER = 1.5f;
@@ -51,9 +49,6 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public static final int LOGO = 3;
     public static final int EXIT = 4;
     
-    public static final int INIT_POINT_X = 50;
-    public static final int INIT_POINT_Y = 25;
-
     public int state;
 
     private Thread gameLoop;
@@ -81,7 +76,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     private Conection conn;
     private boolean servidor;
 
-    private Mapa fase01;
+    private Stones cenario_stones;
 
     /** Starts Applet with page`s requiriment */
     @Override
@@ -107,7 +102,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         try {
 
             //set applet window size
-            this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+            this.setSize(Constantes.WINDOW_WIDTH, Constantes.WINDOW_HEIGHT);
 
             keyVector = new boolean[NUM_OF_KEYS];
 
@@ -124,41 +119,26 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             initConn();
 
             loading.waitForAll();
+            
         } catch (InterruptedException ex) {
             Logger.getLogger("global").log(Level.SEVERE, null, ex);
         }
     }
 
     private void initGame() {
-        /* inicializa mapa */
-        fase01 = new Mapa();
-
+        cenario_stones = new Stones(getImage(getDocumentBase(), "Background.png"),
+                                    getImage(getDocumentBase(), "Buraco.png"),
+                                    getImage(getDocumentBase(), "Bloco.png"),
+                                    getImage(getDocumentBase(), "Inicio.png"),
+                                    getImage(getDocumentBase(), "Fim.png"),
+                                    /*dificuldade facil:1-5:dificil*/ 2);
+        
         /* in,icializa uma esfera que guardara a ref da sua imagem */
-        bluesphere = new Esfera(getImage(getDocumentBase(), "EsferaAzul.png"), 50, 50);
-        fase01.addObject(bluesphere);
+        bluesphere = new Esfera(getImage(getDocumentBase(), "EsferaAzul.png"), (int) cenario_stones.inicio.getX() + 5, (int) cenario_stones.inicio.getY() + 5);
 
         /* inicializa uma esfera que guardara a ref da sua imagem */
-        redsphere = new Esfera(getImage(getDocumentBase(), "EsferaVermelha.png"), 75, 50);
-        fase01.addObject(redsphere);
+        redsphere = new Esfera(getImage(getDocumentBase(), "EsferaVermelha.png"), (int) cenario_stones.inicio.getX() + 35, (int) cenario_stones.inicio.getY() + 5);
         
-        // adiciona o inicio
-        fase01.addObject(new Marca(getImage(getDocumentBase(), "Inicio.png"), 40, 40));
-        
-        // adiciona o termino
-        fase01.addObject(new Marca(getImage(getDocumentBase(), "Fim.png"), WINDOW_WIDTH - 40 - 100 , WINDOW_HEIGHT - 40 - 50));
-        
-        // pega imagem para os buracos
-        fase01.addObject(getImage(getDocumentBase(), "Buraco.png"));
-
-        // pega imagem para os blocos das barras
-        fase01.addObject(getImage(getDocumentBase(), "Bloco.png"));
-        
-        // pega imagem para o background da fase
-        fase01.addObject(getImage(getDocumentBase(), "Background.png"));
-        
-        // gera os buracos e as paredes 
-        // (nao da pra chama isso no construtor pq nao existe ainda as imagens)
-        fase01.gerarMapa();
     }
 
     /**
@@ -235,9 +215,9 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 }
                 
                 // pinta a fase na tela, com background, buracos e paredes
-                fase01.paint(g);
+                cenario_stones.paint(g);
                 
-                //boolean fim = trataColisoes();
+                boolean fim = trataColisoes();
                 // pinta ambas as esferas
                 bluesphere.paint(g);
                 redsphere.paint(g);
@@ -264,7 +244,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public boolean trataColisoes(){
         //bluesphere.trataBuracos(fase01.getBuracos());
         //redsphere.trataBuracos(fase01.getBuracos());
-        bluesphere.trataParedes(fase01.getParedes());
+        bluesphere.trataParedes(cenario_stones.getParedes());
         //redsphere.trataParedes(fase01.getParedes());
         return false;
     }
