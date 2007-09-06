@@ -280,9 +280,9 @@ public class Esfera {
      for (Parede hole : paredes) {
          //nao eh pra acontece nada porraaaa!!!!
          
-        if (    (y > hole.getY() - raio) && 
-                (y < hole.getY() + hole.getAbsTamanhoH()) &&
-                (x >= hole.getX() - raio ) && 
+        if (    (y >= hole.getY() - 2*raio) && 
+                (y <= hole.getY() + hole.getAbsTamanhoH()) &&
+                (x >= hole.getX() -2*raio ) && 
                 (x <= hole.getX() + hole.getAbsTamanhoW()  )     ) {
                 
                 float xb = x + raio;
@@ -335,6 +335,7 @@ public class Esfera {
                     x = hole.getX() + hole.getAbsTamanhoW();
                 }
                 
+                break;
         } 
         
      }//for
