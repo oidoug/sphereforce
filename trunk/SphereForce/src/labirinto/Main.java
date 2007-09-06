@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Main.java
  *
  * Created on April 22, 2007, 10:49 AM
@@ -235,6 +235,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 // pinta a fase na tela, com background, buracos e paredes
                 fase01.paint(g);
                 
+                //boolean fim = trataColisoes();
                 // pinta ambas as esferas
                 bluesphere.paint(g);
                 redsphere.paint(g);
@@ -256,6 +257,14 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 break;
         }
         ;
+    }
+    
+    public boolean trataColisoes(){
+        bluesphere.trataBuracos(fase01.getBuracos());
+        redsphere.trataBuracos(fase01.getBuracos());
+        bluesphere.trataParedes(fase01.getPAredes());
+        redsphere.trataParedes(fase01.getPAredes());
+        return false;
     }
 
     /** Thread method for the game Loop */

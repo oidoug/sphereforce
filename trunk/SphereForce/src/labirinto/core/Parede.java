@@ -117,30 +117,5 @@ public class Parede {
         }
     }
 
-    public void colideCom(Esfera esfera) {
-
-        if ((esfera.getY() > y - esfera.getRaio()) && (esfera.getY() < y + absTamanhoH + esfera.getRaio())) {
-
-            //verifica se colide na parte lateral esquerda da parede
-            if ((esfera.getX() - x) < (esfera.getX() + 2 * esfera.getRaio())) {
-                esfera.setVelX(-esfera.getVelX());
-                esfera.setX(x + 2 * esfera.getRaio());
-            } else if ((x + absTamanhoW + esfera.getRaio()) > esfera.getX()) {
-                esfera.setVelX(-esfera.getVelX());
-                esfera.setX(x);
-            }
-        }
-
-        if ((esfera.getX() > x - esfera.getRaio()) && (esfera.getX() < x + absTamanhoW + esfera.getRaio())) {
-
-            //colisao com a parte superior da parede
-            if ((esfera.getY() - y) < (esfera.getY() + 2 * esfera.getRaio())) {
-                esfera.setVelY(-esfera.getVelY());
-                esfera.setY(y - 2 * esfera.getRaio());
-            } else if ((y + absTamanhoH + esfera.getRaio()) > esfera.getY()) {
-                esfera.setVelY(-esfera.getVelY());
-                esfera.setY(y);
-            }
-        }
-    }
+    
 }
