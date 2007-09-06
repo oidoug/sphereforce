@@ -271,7 +271,7 @@ public class Esfera {
         float cateto1 = hole.getX() - x;
         float cateto2 = hole.getY() - y;
         float distancia = (float) Math.sqrt(cateto1*cateto1 + cateto2*cateto2);
-        if (distancia < hole.getRaio()) 
+        if (distancia < raio) 
             x = y = 100;
       }
     }
@@ -279,31 +279,42 @@ public class Esfera {
     public void trataParedes(LinkedList<Parede> paredes) {
      for (Parede hole : paredes) {
          
-        if ((y > hole.getY() - raio) && (y < y + hole.getAbsTamanhoH() + raio)) {
+        if ((y > hole.getY() - raio) && (y < hole.getY() + hole.getAbsTamanhoH() + raio)) {
 
             //verifica se colide na parte lateral esquerda da parede
-            if ((x - hole.getX()) < (x + 2 * raio)) {
-                velX = -velX;
-                x = hole.getX() + 2*raio;
-            } else if ((hole.getX() + hole.getAbsTamanhoW() + raio) > x) {
-                velX = -velX;
-                x = hole.getX() + hole.getAbsTamanhoW();
+            if ( x < hole.getX()){
+                if ((hole.getX() - x) < (x + 2 * raio)) {
+                    velX = -velX;
+                    x = hole.getX() + 2*raio;
+                }
             }
-        }
-
+            //verifica se colide na parte lateral direita da parede
+            if ( x > hole.getX() + raio){
+                if ((hole.getX() + hole.getAbsTamanhoW() ) > x) {
+                    velX = -velX;
+                    x = hole.getX() + hole.getAbsTamanhoW();
+                }
+            }
+        }     
         if ((x > hole.getX() - raio) && (x < hole.getX() + hole.getAbsTamanhoW() + raio)) {
-            
 
             //colisao com a parte superior da parede
-            if ((y - hole.getY()) < (y + 2 * raio)) {
-                velY = -velY;
-                y = hole.getY() - 2*raio;
-                
-            } else if ((hole.getY() + hole.getAbsTamanhoH() + raio) > y) {
-                velY = -velY;
-                y = hole.getY() + hole.getAbsTamanhoH();
+            if (y < hole.getY()) {
+                if ((hole.getY() - y) < (y + 2 * raio)) {
+                    velY = -velY;
+                    y = hole.getY() - 2*raio;
+                }
             }
+            
+            //colisao com a parte inferior da parede
+            if(y > hole.getY() + raio) {
+                if ((hole.getY() + hole.getAbsTamanhoH() ) > y) {
+                    velY = -velY;
+                    y = hole.getY() + hole.getAbsTamanhoH();
+                }
+            }
+         
         }
-      }   
-     }
+   }
+  }
 }
