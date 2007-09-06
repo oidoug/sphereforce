@@ -75,6 +75,13 @@ public class Mapa {
         }
     }
 
+    public LinkedList<Buraco> getBuracos(){
+        return buracos;
+    }
+    
+    public LinkedList<Parede> getPAredes(){
+        return paredes;
+    }
     public void gerarMapa() {
         gerarBuracos();
         gerarParedes();

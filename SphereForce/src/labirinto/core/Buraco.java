@@ -65,15 +65,7 @@ public class Buraco {
         g.drawImage(buracoImage, (int) x, (int) y, null);
     }
     
-    public boolean colideCom(Esfera esfera) {
-      float cateto1 = x - esfera.getX();
-      float cateto2 = y - esfera.getY();
-      float distancia = (float) Math.sqrt(cateto1*cateto1 + cateto2*cateto2);
-      if (distancia < raio + esfera.getRaio())
-          return true;
-      else        
-        return false;
-    }
+    
     
     // o buraco ao ser construido nao pode estar no mesmo lugar que a parede
     public boolean colideCom(Parede parede) {
