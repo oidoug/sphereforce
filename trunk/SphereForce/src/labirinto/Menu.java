@@ -56,9 +56,9 @@ public class Menu implements KeyListener {
 
         long stopTime = OUT_TIME;
         long startTime = System.currentTimeMillis();
-        while (y < Main.WINDOW_HEIGHT) {
+        while (y < Constantes.WINDOW_HEIGHT) {
             x = 0;
-            while (x < Main.WINDOW_WIDTH) {
+            while (x < Constantes.WINDOW_WIDTH) {
                 g.drawImage(background, x, y, null);
                 x = x + BackGW;
             }

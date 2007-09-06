@@ -241,9 +241,9 @@ public class Esfera {
 
     public void trataLaterais() {
         //colisao parede direita
-        if (x >= Main.WINDOW_WIDTH - raio * 2) {
+        if (x >= Constantes.WINDOW_WIDTH - raio * 2) {
             velX = -velX;
-            x = Main.WINDOW_WIDTH - raio * 2;
+            x = Constantes.WINDOW_WIDTH - raio * 2;
         }
 
         //colisao parede esquerda
@@ -253,9 +253,9 @@ public class Esfera {
         }
 
         //colisao parede inferior
-        if (y >= Main.WINDOW_HEIGHT - 20) {
+        if (y >= Constantes.WINDOW_HEIGHT - 20) {
             velY = -velY;
-            y = Main.WINDOW_HEIGHT - raio * 2;
+            y = Constantes.WINDOW_HEIGHT - raio * 2;
         }
 
         //colisao parede superior

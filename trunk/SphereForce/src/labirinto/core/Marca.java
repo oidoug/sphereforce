@@ -11,6 +11,7 @@ package labirinto.core;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import labirinto.Constantes;
 
 /**
  *
@@ -20,8 +21,6 @@ public class Marca {
     
     // define posicao da marca na tela
     private float x,y;
-    private float H;
-    private float W;
     
     // define imagem para a marca
     private Image marca;
@@ -29,10 +28,6 @@ public class Marca {
     public Marca(Image marca, float posx, float posy) {
         x = posx;
         y = posy;
-        
-        //por os valores corretos
-        H = 20;
-        W = 50;
         
         this.marca = marca;
     }
@@ -53,11 +48,11 @@ public class Marca {
     }
     
     public float getH(){
-        return H;
+        return Constantes.MARCA_H;
     }
     
     public float getW(){
-        return W;
+        return Constantes.MARCA_W;
     }
     
     // pinta marca na tela
@@ -70,25 +65,25 @@ public class Marca {
         boolean colide = false;
         
         if ((esfera.getY() > y - esfera.getRaio()) &&
-                (esfera.getY() < y + H + esfera.getRaio())){
+                (esfera.getY() < y + Constantes.MARCA_H + esfera.getRaio())){
            
             if ( (esfera.getX() - x) < (esfera.getX() + 2*esfera.getRaio()) ){
                 colide =  true;
             }
             
-            else if ((x + W + esfera.getRaio()) > esfera.getX()){
+            else if ((x + Constantes.MARCA_W + esfera.getRaio()) > esfera.getX()){
                 colide = true;
             }
         }
         
         if ((esfera.getX() > x - esfera.getRaio()) &&
-                (esfera.getX() < x + W + esfera.getRaio()) ) {
+                (esfera.getX() < x + Constantes.MARCA_W + esfera.getRaio()) ) {
             
             if ( (esfera.getY() - y) < (esfera.getY() + 2*esfera.getRaio()) ) {
                 colide = true;
             }
             
-            else if ((y + H + esfera.getRaio()) > esfera.getY()) {
+            else if ((y + Constantes.MARCA_H + esfera.getRaio()) > esfera.getY()) {
                 colide = true;
             }
         }
