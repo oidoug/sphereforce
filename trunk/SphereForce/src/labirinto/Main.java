@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Main.java
  *
  * Created on April 22, 2007, 10:49 AM
@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 import labirinto.core.*;
 
-
+//teste comit
 
 public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
 
