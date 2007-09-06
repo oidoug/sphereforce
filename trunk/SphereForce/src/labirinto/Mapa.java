@@ -39,7 +39,7 @@ public class Mapa {
     private Esfera redsphere;
     private Esfera bluesphere;
 
-    private final int NUM_BURACOS = 6;
+    private final int NUM_BURACOS = 2;
 
     public Mapa() {
         buracos = new LinkedList<Buraco>();
@@ -137,6 +137,7 @@ public class Mapa {
     private void gerarParedes() {
         // a dona aranha, subui pela parede, venho a chuva forte e um granito atravessou seu crânio
         paredes.add(new Parede(blocoImg, 5, true, 400, 100));
-        paredes.add(new Parede(blocoImg, 15, false, 0, 580));
+        paredes.add(new Parede(blocoImg, 15, true, 0, 580));
+        paredes.add(new Parede(blocoImg, 30, false, 0, 0));
     }
 }
