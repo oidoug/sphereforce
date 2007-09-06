@@ -12,7 +12,6 @@ package labirinto;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 /**
  *

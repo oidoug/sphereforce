@@ -39,9 +39,9 @@ public class Mapa {
     private Esfera redsphere;
     private Esfera bluesphere;
 
-    private final int NUM_BURACOS = 3;
-    
-    private final int TAMANHOBLOCO = 20; 
+    private final int NUM_BURACOS = 5;
+
+    private final int TAMANHOBLOCO = 20;
 
     public Mapa() {
         buracos = new LinkedList<Buraco>();
@@ -75,13 +75,15 @@ public class Mapa {
         }
     }
 
-    public LinkedList<Buraco> getBuracos(){
+    public LinkedList<Buraco> getBuracos() {
         return buracos;
     }
     
     public LinkedList<Parede> getParedes(){
+
         return paredes;
     }
+
     public void gerarMapa() {
         //gerarBuracos();
         gerarParedes();
@@ -106,14 +108,14 @@ public class Mapa {
         for (Buraco hole : buracos) {
             hole.paint(g);
         }
-         END buracos */
+        /* END buracos */
 
         /* BEGIN paredes */
         for (Parede wall : paredes) {
             wall.paint(g);
         }
         /* END paredes */
-        
+
         /* BEGIN marcas */
         largada.paint(g);
         chegada.paint(g);
@@ -167,6 +169,4 @@ public class Mapa {
         paredes.add(new Parede(blocoImg, 20, true, TAMANHOBLOCO * 24, TAMANHOBLOCO,7));
         paredes.add(new Parede(blocoImg, 20, true, TAMANHOBLOCO * 31, TAMANHOBLOCO * 10,8));
     }
-    
-
 }

@@ -217,8 +217,8 @@ public class Esfera {
             distancia = 2*raio;
             float cat1 = ((float) Math.sin(theta1)) * distancia;
             float cat2 = ((float) Math.sin(theta2)) * distancia;
-            float almentox = (float) (Math.abs(cat1) - Math.abs(cateto1));
-            float almentoy = (float) (Math.abs(cat2) - Math.abs(cateto2));
+            float almentox = (java.lang.Math.abs(cat1) - java.lang.Math.abs(cateto1));
+            float almentoy = (java.lang.Math.abs(cat2) - java.lang.Math.abs(cateto2));
 
             // hauhauahuahua  isso aki eh criatividade
             if (x < inimiga.getX()) {

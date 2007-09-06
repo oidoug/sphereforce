@@ -1,3 +1,6 @@
+
+package labirinto;
+
 /*
  * Main.java
  *
@@ -7,7 +10,6 @@
  * por Douglas Schmidt, Renato Euclides Silva e Mateus Balconi
  */
 
-package labirinto;
 
 /**
  * Imports to Main
@@ -235,7 +237,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 // pinta a fase na tela, com background, buracos e paredes
                 fase01.paint(g);
                 
-                boolean fim = trataColisoes();
+                //boolean fim = trataColisoes();
                 // pinta ambas as esferas
                 bluesphere.paint(g);
                 redsphere.paint(g);
