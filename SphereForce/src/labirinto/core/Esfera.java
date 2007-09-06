@@ -9,6 +9,7 @@ package labirinto.core;
 import labirinto.*;
 import java.awt.*;
 import java.applet.*;
+import java.util.LinkedList;
 
 
 public class Esfera {
@@ -263,7 +264,46 @@ public class Esfera {
             y = 0;
         }
 
-   
+    }
+
+    public void colideCom(LinkedList<Buraco> buracos) {
+      for (Buraco hole : buracos){
+        float cateto1 = hole.getX() - x;
+        float cateto2 = hole.getY() - y;
+        float distancia = (float) Math.sqrt(cateto1*cateto1 + cateto2*cateto2);
+        if (distancia < raio + hole.getRaio()) 
+            x = y = 100;
+      }
     }
     
+    public void colideCom(LinkedList<Parede> paredes) {
+     for (Parede hole : paredes) {
+         
+        if ((y > hole.getY() - raio) && (y < y + hole.getAbsTamanhoH() + raio)) {
+
+            //verifica se colide na parte lateral esquerda da parede
+            if ((x - hole.getX()) < (x + 2 * raio)) {
+                velX = -velX;
+                x = hole.getX() + 2*raio;
+            } else if ((hole.getX() + hole.getAbsTamanhoW() + raio) > x) {
+                velX = -velX;
+                x = hole.getX() + hole.getAbsTamanhoW();
+            }
+        }
+
+        if ((x > hole.getX() - raio) && (x < hole.getX() + hole.getAbsTamanhoW() + raio)) {
+            
+
+            //colisao com a parte superior da parede
+            if ((y - hole.getY()) < (y + 2 * raio)) {
+                velY = -velY;
+                y = hole.getY() - 2*raio;
+                
+            } else if ((hole.getY() + hole.getAbsTamanhoH() + raio) > y) {
+                velY = -velY;
+                y = hole.getY() + hole.getAbsTamanhoH();
+            }
+        }
+      }   
+     }
 }
