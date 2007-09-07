@@ -48,7 +48,7 @@ public class Esfera {
         
         //raio = H / 2;
         
-        raio = 10;
+        raio = 15;
     }
 
 

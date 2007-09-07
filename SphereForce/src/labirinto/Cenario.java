@@ -95,9 +95,9 @@ public class Cenario {
             while (x < Constantes.WINDOW_WIDTH) {
 
                 g.drawImage(background, x, y, null);
-                x = x + Constantes.BACKGROUND_W;
+                x = x + 50;
             }
-            y = y + Constantes.BACKGROUND_H;
+            y = y + 50;
         }
         /* END background */
 

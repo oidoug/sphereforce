@@ -80,7 +80,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     /** Starts Applet with page`s requiriment */
     @Override
     public void start() {
-        state = GAME_ON;
+        state = LOGO;
         gameLoop = new Thread(this);
         gameLoop.start();
     }
@@ -125,19 +125,19 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     }
 
     private void initGame() {
-        cenario_stones = new Stones(getImage(getDocumentBase(), "Background.png"),
+        cenario_stones = new Stones(getImage(getDocumentBase(), "MarbleTexture.png"),
                                     getImage(getDocumentBase(), "Buraco.png"),
                                     getImage(getDocumentBase(), "Bloco.png"),
-                                    getImage(getDocumentBase(), "Bloco.png"), //pedra
+                                    getImage(getDocumentBase(), "Pedra.png"),
                                     getImage(getDocumentBase(), "Inicio.png"),
                                     getImage(getDocumentBase(), "Fim.png"),
                                     /*dificuldade facil:1-5:dificil*/ 4);
         
         /* in,icializa uma esfera que guardara a ref da sua imagem */
-        bluesphere = new Esfera(getImage(getDocumentBase(), "EsferaAzul.png"), (int) cenario_stones.inicio.getX() + 5, (int) cenario_stones.inicio.getY() + 10);
+        bluesphere = new Esfera(getImage(getDocumentBase(), "blueSphere30p.png"), (int) cenario_stones.inicio.getX() + 15, (int) cenario_stones.inicio.getY() + 12);
 
         /* inicializa uma esfera que guardara a ref da sua imagem */
-        redsphere = new Esfera(getImage(getDocumentBase(), "EsferaVermelha.png"), (int) cenario_stones.inicio.getX() + 45, (int) cenario_stones.inicio.getY() + 10);
+        redsphere = new Esfera(getImage(getDocumentBase(), "redSphere30p.png"), (int) cenario_stones.inicio.getX() + 55, (int) cenario_stones.inicio.getY() + 12);
         
     }
 
@@ -148,12 +148,13 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     private void initMenu() {
         /* intantiate the logo object and add a new logo */
         logoscreen = new Logo(this);
+        //logoscreen.addLogo(getImage(getDocumentBase(), "redSphere.png"), 120);
         logoscreen.addLogo(getImage(getDocumentBase(), "qua.png"));
         logoscreen.addLogo(getImage(getDocumentBase(), "barigada.png"));
 
         /* instantiate the button image, the background and game logo */
         menuscreen = new Menu(this);
-        menuscreen.setImages(getImage(getDocumentBase(), "Background.png"), getImage(getDocumentBase(), "Title.png"), getImage(getDocumentBase(), "Buttom.png"));
+        menuscreen.setImages(getImage(getDocumentBase(), "Marble.png"), getImage(getDocumentBase(), "Title.png"), getImage(getDocumentBase(), "Buttom.png"));
     }
 
     /**
@@ -324,5 +325,18 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
             keyVector[ESCAPE] = false;
         }
+    }
+    
+    /** Method keyWasPressed()
+     * checks if in a game loop some key was or are pressed
+     * is used in logo and menu mode
+     */
+    public boolean keyWasPressed() {
+        for (int i = 0; i< NUM_OF_KEYS; i++) {
+            if(keyVector[i]) {
+                return true;
+            }
+        }
+        return false;
     }
 }
