@@ -42,7 +42,7 @@ public class Cenario {
         paredes = new LinkedList<Parede>();
         buracos = new LinkedList<Buraco>();
         pedras = new LinkedList<Pedra>();
-        
+
 
         this.background = background;
         this.buraco = buraco;
@@ -65,7 +65,7 @@ public class Cenario {
     public Image getBuracoImg() {
         return buraco;
     }
-    
+
     public Image getPedraImg() {
         return pedra;
     }
@@ -77,7 +77,7 @@ public class Cenario {
     public LinkedList<Buraco> getBuracos() {
         return buracos;
     }
-    
+
     public LinkedList<Pedra> getPedras() {
         return pedras;
     }
@@ -112,7 +112,7 @@ public class Cenario {
             wall.paint(g);
         }
         /* END paredes */
-        
+
         /* BEGIN pedras */
         for (Pedra stone : pedras) {
             stone.paint(g);
@@ -137,54 +137,41 @@ public class Cenario {
         int nBuracosOk = 0;
         Random generator = new Random();
         Buraco hole;
-        
-        for (int i = 0; i < Constantes.DIVISOES_CANVAS; i++) {
-            for (int j = 0; j < Constantes.DIVISOES_CANVAS; j++) {
 
-                do {
-                    randX = generator.nextInt(Constantes.WINDOW_WIDTH);
-                    randY = generator.nextInt(Constantes.WINDOW_HEIGHT);
+        do {
+            randX = generator.nextInt(Constantes.WINDOW_WIDTH);
+            randY = generator.nextInt(Constantes.WINDOW_HEIGHT);
 
-                    hole = new Buraco(buraco, randX, randY);
+            hole = new Buraco(buraco, randX, randY);
 
-                    if (!hole.colideCom(inicio) && !hole.colideCom(fim) && !hole.colideCom(paredes)) {
-                        nBuracosOk++;
-                        buracos.add(hole);
-                    }
-                } while (nBuracosOk <= dificuldade);
+            if (!hole.colideCom(inicio) && !hole.colideCom(fim) && !hole.colideCom(paredes)) {
+                nBuracosOk++;
+                buracos.add(hole);
             }
-        }
+        } while (nBuracosOk <= dificuldade);
     }
-    
-    protected void pedras(){
-        
+
+    protected void pedras() {
+
         int randx;
         int randy;
-        
+
         Pedra stone;
-        
+        Random generator = new Random();
+
         int nPedrasOk = 0;
-        
-        for (int i=0; i < Constantes.DIVISOES_CANVAS; i++){
-            for (int j=0; j < Constantes.DIVISOES_CANVAS; j++){
-                do {
-                    randx = (int) ( (i * Constantes.WINDOW_WIDTH/Constantes.DIVISOES_CANVAS) +
-                            (Constantes.WINDOW_WIDTH/Constantes.DIVISOES_CANVAS * Math.random()) );
-                    randy = (int) ( (j * Constantes.WINDOW_HEIGHT/Constantes.DIVISOES_CANVAS) +
-                            (Constantes.WINDOW_HEIGHT/Constantes.DIVISOES_CANVAS * Math.random()) );
-                
-//                    randX = generator.nextInt(Constantes.WINDOW_WIDTH);
-//                    randY = generator.nextInt(Constantes.WINDOW_HEIGHT);
 
-                    stone = new Pedra(pedra, randx, randy);
+        do {
 
-                    if (!stone.colideCom(inicio) && !stone.colideCom(fim) 
-                            && !stone.colideComParedes(paredes) && !stone.colideComBuracos(buracos)) {
-                        nPedrasOk++;
-                        pedras.add(stone);
-                    }
-                } while (nPedrasOk <= dificuldade);
+            randx = generator.nextInt(Constantes.WINDOW_WIDTH);
+            randy = generator.nextInt(Constantes.WINDOW_HEIGHT);
+
+            stone = new Pedra(pedra, randx, randy);
+
+            if (!stone.colideCom(inicio) && !stone.colideCom(fim) && !stone.colideComParedes(paredes) && !stone.colideComBuracos(buracos)) {
+                nPedrasOk++;
+                pedras.add(stone);
             }
-        }
+        } while (nPedrasOk <= dificuldade);
     }
 }
