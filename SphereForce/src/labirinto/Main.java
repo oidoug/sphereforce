@@ -131,13 +131,13 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                                     getImage(getDocumentBase(), "Bloco.png"), //pedra
                                     getImage(getDocumentBase(), "Inicio.png"),
                                     getImage(getDocumentBase(), "Fim.png"),
-                                    /*dificuldade facil:1-5:dificil*/ 2);
+                                    /*dificuldade facil:1-5:dificil*/ 10);
         
         /* in,icializa uma esfera que guardara a ref da sua imagem */
-        bluesphere = new Esfera(getImage(getDocumentBase(), "EsferaAzul.png"), (int) cenario_stones.inicio.getX() + 5, (int) cenario_stones.inicio.getY() + 5);
+        bluesphere = new Esfera(getImage(getDocumentBase(), "EsferaAzul.png"), (int) cenario_stones.inicio.getX() + 5, (int) cenario_stones.inicio.getY() + 10);
 
         /* inicializa uma esfera que guardara a ref da sua imagem */
-        redsphere = new Esfera(getImage(getDocumentBase(), "EsferaVermelha.png"), (int) cenario_stones.inicio.getX() + 35, (int) cenario_stones.inicio.getY() + 5);
+        redsphere = new Esfera(getImage(getDocumentBase(), "EsferaVermelha.png"), (int) cenario_stones.inicio.getX() + 45, (int) cenario_stones.inicio.getY() + 10);
         
     }
 
@@ -217,7 +217,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 // pinta a fase na tela, com background, buracos e paredes
                 cenario_stones.paint(g);
                 
-                boolean fim = trataColisoes();
+                trataColisoes();
+                
                 // pinta ambas as esferas
                 bluesphere.paint(g);
                 redsphere.paint(g);
@@ -229,6 +230,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 break;
             case MENU:
                 menuscreen.paint(g);
+                
                 break;
             case GAME_STOP:
                 break;
@@ -241,14 +243,13 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         ;
     }
     
-    public boolean trataColisoes(){
+    public void trataColisoes(){
         //bluesphere.trataBuracos(fase01.getBuracos());
         //redsphere.trataBuracos(fase01.getBuracos());
         bluesphere.trataParedes(cenario_stones.getParedes());
         //redsphere.trataParedes(fase01.getParedes());
         bluesphere.trataPedras(cenario_stones.getPedras());
         //redsphere.trataParedes(fase01.getPedras());
-        return false;
     }
 
     /** Thread method for the game Loop */

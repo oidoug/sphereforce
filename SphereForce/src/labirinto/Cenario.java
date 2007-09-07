@@ -12,6 +12,7 @@ package labirinto;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.LinkedList;
+import java.util.Random;
 import labirinto.core.*;
 
 /**
@@ -124,7 +125,7 @@ public class Cenario {
         /* END marcas */
     }
 
-    /** 
+    /**
      * Method: buracos()
      * Gera uma lista de buracos divididos em regioes definidas por
      * Constantes.DIVISOES_CANVAS;
@@ -133,40 +134,37 @@ public class Cenario {
     protected void buracos() {
         int randX;
         int randY;
-        boolean colide = false;
         int nBuracosOk = 0;
-        for (int i = 0; i <= Constantes.DIVISOES_CANVAS * Constantes.DIVISOES_CANVAS; i++) {
-            do {
-                randX = (int) ((Constantes.WINDOW_WIDTH/Constantes.DIVISOES_CANVAS * i) * Math.random());
-                randY = (int) ((Constantes.WINDOW_HEIGHT/Constantes.DIVISOES_CANVAS * i) * Math.random());
+        Random generator = new Random();
+        Buraco hole;
+        
+        for (int i = 0; i < Constantes.DIVISOES_CANVAS; i++) {
+            for (int j = 0; j < Constantes.DIVISOES_CANVAS; j++) {
 
-                Buraco hole = new Buraco(buraco, randX, randY);
+                do {
+                    randX = generator.nextInt(Constantes.WINDOW_WIDTH);
+                    randY = generator.nextInt(Constantes.WINDOW_HEIGHT);
 
-                if (hole.colideCom(inicio) || hole.colideCom(fim)) {
-                    colide = true;
-                } else {
-                    for (Parede parede : paredes) {
-                        if (hole.colideCom(parede)) {
-                            colide = true;
-                        }
+                    hole = new Buraco(buraco, randX, randY);
+
+                    if (!hole.colideCom(inicio) && !hole.colideCom(fim) && !hole.colideCom(paredes)) {
+                        nBuracosOk++;
+                        buracos.add(hole);
                     }
-                }
-                if (!colide) {
-                    buracos.add(new Buraco(buraco, randX, randY));
-                    nBuracosOk++;
-                }
-            } while (nBuracosOk <= dificuldade);
+                } while (nBuracosOk <= dificuldade);
+            }
         }
     }
     
     protected void pedras(){
-        //pedras.add(new Pedra(pedra, 75, 250));
-        //pedras.add(new Pedra(pedra, 200, 300));
         
         int randx;
         int randy;
-        boolean colide = false;
+        
+        Pedra stone;
+        
         int nPedrasOk = 0;
+        
         for (int i=0; i < Constantes.DIVISOES_CANVAS; i++){
             for (int j=0; j < Constantes.DIVISOES_CANVAS; j++){
                 do {
@@ -174,34 +172,18 @@ public class Cenario {
                             (Constantes.WINDOW_WIDTH/Constantes.DIVISOES_CANVAS * Math.random()) );
                     randy = (int) ( (j * Constantes.WINDOW_HEIGHT/Constantes.DIVISOES_CANVAS) +
                             (Constantes.WINDOW_HEIGHT/Constantes.DIVISOES_CANVAS * Math.random()) );
-                    
-                    Pedra stone = new Pedra(pedra, randx, randy);
-                    
-                    if (stone.colideCom(inicio) || stone.colideCom(fim)){
-                        colide = true;
-                    }
-                    else {
-                        for (Parede wall : paredes){
-                            if (stone.colideCom(wall)){
-                                colide = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!colide){
-                        for (Buraco hole : buracos){
-                            if (stone.colideCom(hole)) {
-                                colide = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!colide) {
-                        pedras.add(new Pedra(pedra, randx, randy));
+                
+//                    randX = generator.nextInt(Constantes.WINDOW_WIDTH);
+//                    randY = generator.nextInt(Constantes.WINDOW_HEIGHT);
+
+                    stone = new Pedra(pedra, randx, randy);
+
+                    if (!stone.colideCom(inicio) && !stone.colideCom(fim) 
+                            && !stone.colideComParedes(paredes) && !stone.colideComBuracos(buracos)) {
                         nPedrasOk++;
+                        pedras.add(stone);
                     }
-                    
-                }while (nPedrasOk <= dificuldade);
+                } while (nPedrasOk <= dificuldade);
             }
         }
     }
