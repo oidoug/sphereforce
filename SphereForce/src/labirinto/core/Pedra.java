@@ -1,16 +1,18 @@
 /*
- * Buraco.java
+ * Pedra.java
  *
- * Created on September 4, 2007, 9:26 AM
+ * Created on September 6, 2007, 9:48 PM
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
 
-
 package labirinto.core;
 
-
+/**
+ *
+ * @author r
+ */
 import labirinto.*;
 import java.awt.*;
 import java.applet.*;
@@ -18,19 +20,17 @@ import java.applet.*;
  *
  * @author r
  */
-public class Buraco {
+public class Pedra {
     
-    private Image buracoImage;
+    private Image pedraImage;
     private int x, y;
-    private int caiu;
     private float raio;
     
     /** Creates a new instance of Buraco */
-    public Buraco(Image bah, int posx, int posy) {
+    public Pedra(Image bah, int posx, int posy) {
         x = posx;
         y = posy;
-        caiu = 0;
-        buracoImage = bah;
+        pedraImage = bah;
         
         raio = 10;
     }
@@ -52,22 +52,11 @@ public class Buraco {
     public float getY(){
         return y;
     }
-    
-    public void setCaiu(int valor){
-        caiu = valor;
-    }
-    
-    public int getCaiu(){
-        return caiu;
-    }
         
     public void paint(Graphics g) {
-        g.drawImage(buracoImage, (int) x, (int) y, null);
+        g.drawImage(pedraImage, (int) x, (int) y, null);
     }
     
-    
-    
-    // o buraco ao ser construido nao pode estar no mesmo lugar que a parede
     public boolean colideCom(Parede parede) {
         if (    (y >= parede.getY() - 2*raio) && 
                 (y <= parede.getY() + parede.getAbsTamanhoH()) &&
@@ -78,7 +67,6 @@ public class Buraco {
             return false;
     }
     
-    // o buraco nao deve ser construido se estiver na mesma posicao de uma marca
     public boolean colideCom(Marca marca) {
         if (    (y >= marca.getY() - 2*raio) && 
                 (y <= marca.getY() + marca.getH()) &&

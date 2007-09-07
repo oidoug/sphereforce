@@ -268,17 +268,55 @@ public class Esfera {
 
     public void trataBuracos(LinkedList<Buraco> buracos) {
       for (Buraco hole : buracos){
-        float cateto1 = hole.getX() - x;
-        float cateto2 = hole.getY() - y;
-        float distancia = (float) Math.sqrt(cateto1*cateto1 + cateto2*cateto2);
+        float distancia = getDistancia(x, y, hole.getX(), hole.getY());
         if (distancia < raio) 
             x = y = 100;
       }
     }
     
+    public void trataPedras(LinkedList<Pedra> pedras) {
+      for (Pedra hole : pedras){
+        float distancia = getDistancia(x, y, hole.getX(), hole.getY());
+        if (distancia < raio + hole.getRaio()){
+            velX = -velX;
+            velY = -velY;
+            desgrudaPedra(hole);
+        } 
+            
+      }
+    }
+    
+    public void desgrudaPedra(Pedra pedra){
+        float cateto1 = pedra.getX() - x;
+        float cateto2 = pedra.getY() - y;
+        float distancia = (float) Math.sqrt(cateto1*cateto1 + cateto2*cateto2);
+        
+        if (distancia < raio + pedra.getRaio()) {
+            
+            double theta1 = Math.asin(cateto1 / distancia);
+            double theta2 = Math.asin(cateto2 / distancia);
+            distancia = raio + pedra.getRaio();
+            float cat1 = ((float) Math.sin(theta1)) * distancia;
+            float cat2 = ((float) Math.sin(theta2)) * distancia;
+            float almentox = (java.lang.Math.abs(cat1) - java.lang.Math.abs(cateto1));
+            float almentoy = (java.lang.Math.abs(cat2) - java.lang.Math.abs(cateto2));
+            
+            if (x > pedra.getX())
+                x = x + almentox;
+            else 
+                x = x - almentox;
+            
+            if (y > pedra.getY())
+                y = y + almentoy;
+            else 
+                y = y - almentoy;
+            
+            
+        }
+    }
     public void trataParedes(LinkedList<Parede> paredes) {
      for (Parede hole : paredes) {
-         //nao eh pra acontece nada porraaaa!!!!
+        
          
         if (    (y >= hole.getY() - 2*raio) && 
                 (y <= hole.getY() + hole.getAbsTamanhoH()) &&

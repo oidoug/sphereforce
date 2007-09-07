@@ -19,9 +19,9 @@ import labirinto.core.Marca;
  */
 public class Stones extends Cenario {
 
-    public Stones(Image background, Image buraco, Image bloco, Image marca_inicio, Image marca_fim, int dificuldade) {
+    public Stones(Image background, Image buraco, Image bloco, Image pedra, Image marca_inicio, Image marca_fim, int dificuldade) {
         
-        super(background, buraco, bloco, marca_inicio, marca_fim, dificuldade);
+        super(background, buraco, bloco, pedra, marca_inicio, marca_fim, dificuldade);
 
         /* Precisa-se criar as marcas de inicio e fim do cenario */
         super.inicio = new Marca(marca_inicio, 40, 40);
@@ -29,6 +29,7 @@ public class Stones extends Cenario {
 
         labirinto();
         //super.buracos();
+        super.pedras();
     }
 
     private void labirinto() {
