@@ -76,4 +76,14 @@ public class Pedra {
         else
             return false;
     }
+    
+    public boolean colideCom(Buraco buraco){
+        float cateto1 = x - buraco.getX();
+        float cateto2 = y - buraco.getY();
+        float distancia = Math.abs(cateto1*cateto1 + cateto2*cateto2);
+        if (distancia <= raio + buraco.getRaio())
+            return true;
+        else
+            return false;
+    }
 }

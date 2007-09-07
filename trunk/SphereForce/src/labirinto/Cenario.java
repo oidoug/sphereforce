@@ -160,7 +160,49 @@ public class Cenario {
     }
     
     protected void pedras(){
-        pedras.add(new Pedra(pedra, 75, 250));
-        pedras.add(new Pedra(pedra, 200, 300));
+        //pedras.add(new Pedra(pedra, 75, 250));
+        //pedras.add(new Pedra(pedra, 200, 300));
+        
+        int randx;
+        int randy;
+        boolean colide = false;
+        int nPedrasOk = 0;
+        for (int i=0; i < Constantes.DIVISOES_CANVAS; i++){
+            for (int j=0; j < Constantes.DIVISOES_CANVAS; j++){
+                do {
+                    randx = (int) ( (i * Constantes.WINDOW_WIDTH/Constantes.DIVISOES_CANVAS) +
+                            (Constantes.WINDOW_WIDTH/Constantes.DIVISOES_CANVAS * Math.random()) );
+                    randy = (int) ( (j * Constantes.WINDOW_HEIGHT/Constantes.DIVISOES_CANVAS) +
+                            (Constantes.WINDOW_HEIGHT/Constantes.DIVISOES_CANVAS * Math.random()) );
+                    
+                    Pedra stone = new Pedra(pedra, randx, randy);
+                    
+                    if (stone.colideCom(inicio) || stone.colideCom(fim)){
+                        colide = true;
+                    }
+                    else {
+                        for (Parede wall : paredes){
+                            if (stone.colideCom(wall)){
+                                colide = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!colide){
+                        for (Buraco hole : buracos){
+                            if (stone.colideCom(hole)) {
+                                colide = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!colide) {
+                        pedras.add(new Pedra(pedra, randx, randy));
+                        nPedrasOk++;
+                    }
+                    
+                }while (nPedrasOk <= dificuldade);
+            }
+        }
     }
 }
