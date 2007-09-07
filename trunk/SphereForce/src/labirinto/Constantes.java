@@ -17,8 +17,8 @@ public class Constantes {
     
     public static final int TAMANHO_BLOCO = 20;
     
-    public static final int BACKGROUND_W = 30;
-    public static final int BACKGROUND_H = 30;
+    public static final int BACKGROUND_W = 50;
+    public static final int BACKGROUND_H = 50;
     
     
     /** ponto de inicio das esferas, depende de onde coloca-se o inicio */
