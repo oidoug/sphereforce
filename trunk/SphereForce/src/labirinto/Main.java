@@ -131,7 +131,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                                     getImage(getDocumentBase(), "Bloco.png"), //pedra
                                     getImage(getDocumentBase(), "Inicio.png"),
                                     getImage(getDocumentBase(), "Fim.png"),
-                                    /*dificuldade facil:1-5:dificil*/ 10);
+                                    /*dificuldade facil:1-5:dificil*/ 4);
         
         /* in,icializa uma esfera que guardara a ref da sua imagem */
         bluesphere = new Esfera(getImage(getDocumentBase(), "EsferaAzul.png"), (int) cenario_stones.inicio.getX() + 5, (int) cenario_stones.inicio.getY() + 10);
@@ -244,8 +244,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     }
     
     public void trataColisoes(){
-        //bluesphere.trataBuracos(fase01.getBuracos());
-        //redsphere.trataBuracos(fase01.getBuracos());
+        bluesphere.trataBuracos(cenario_stones.getBuracos());
+        //redsphere.trataBuracos(cenario_stones.getBuracos());
         bluesphere.trataParedes(cenario_stones.getParedes());
         //redsphere.trataParedes(fase01.getParedes());
         bluesphere.trataPedras(cenario_stones.getPedras());

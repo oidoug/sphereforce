@@ -271,9 +271,10 @@ public class Esfera {
     public void trataBuracos(LinkedList<Buraco> buracos) {
       for (Buraco hole : buracos){
         float distancia = getDistancia(x, y, hole.getX(), hole.getY());
-        if (distancia < raio) 
+        if (distancia < raio) {
             x = Constantes.SPHERE_INIT_POINT_X;
             y = Constantes.SPHERE_INIT_POINT_Y;
+      }
       }
     }
     
