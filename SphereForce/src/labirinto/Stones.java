@@ -29,7 +29,7 @@ public class Stones extends Cenario {
 
         labirinto();
         super.buracos();
-        super.pedras();
+        //super.pedras();
     }
 
     private void labirinto() {
