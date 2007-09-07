@@ -198,9 +198,11 @@ public class Esfera {
     // retorna distancia entre as esferas
     public float getDistancia(float x1, float y1, float x2, float y2) {
 
-        float cateto1 = y2 - y1;
-        float cateto2 = x2 - x1;
-        return (float) Math.sqrt(cateto1*cateto1 + cateto2*cateto2);
+        float distancia;
+        float cateto1 = (y2 - y1);
+        float cateto2 = (x2 - x1);
+        distancia =  (float) Math.sqrt(cateto1*cateto1 + cateto2*cateto2);
+        return distancia;
     }
 
 
@@ -323,58 +325,38 @@ public class Esfera {
                 (y <= hole.getY() + hole.getAbsTamanhoH()) &&
                 (x >= hole.getX() -2*raio ) && 
                 (x <= hole.getX() + hole.getAbsTamanhoW()  )     ) {
+            
+               
+                 
+                    if ( (hole.getY() <= y + 2*raio) && (hole.getY() > y)) {
+                        System.out.printf("\n bateu em cima da parede: %d",hole.getId());
+                        velY = -velY;
+                        y = hole.getY() - 2*raio;
+                    }
+                    
+                    if ( (hole.getAbsTamanhoH() + hole.getY() >= y) && (hole.getAbsTamanhoH() + hole.getY() < y+2*raio)) {
+                        System.out.printf("\n bateu em baixo da parede: %d",hole.getId());
+                        velY = -velY;
+                        y = hole.getY() + hole.getAbsTamanhoH();
+                    }
+               
                 
-                float xb = x + raio;
-                float yb = y + raio;
                 
-                float m1x = hole.getAbsTamanhoW() / 2;
-                float m1y = hole.getY();
+                    
+                    if ( (hole.getX() <= x + 2*raio) && (hole.getX() > x)) {
+                        System.out.printf("\n bateu a esquerda da parede: %d",hole.getId());
+                        velX = -velX;
+                        x = hole.getX() - 2*raio;
+                        
+                    }
+                    
+                    if ( (hole.getAbsTamanhoW() + hole.getX() >= x) && (hole.getAbsTamanhoW() + hole.getX() < x+2*raio)) {
+                        System.out.printf("\n bateu a direita da parede: %d",hole.getId());
+                        velX = -velX;
+                        x = hole.getX() + hole.getAbsTamanhoW();
+                    }
                 
-                float m2x = hole.getX();
-                float m2y = hole.getAbsTamanhoH() / 2;
-                
-                float m3x = hole.getAbsTamanhoW() / 2;
-                float m3y = hole.getY() + hole.getAbsTamanhoH();
-                
-                float m4x = hole.getX() + hole.getAbsTamanhoW();
-                float m4y = hole.getAbsTamanhoH() / 2;
-                
-                float d1 = getDistancia(xb, yb, m1x, m1y);
-                float d2 = getDistancia(xb, yb, m2x, m2y);
-                float d3 = getDistancia(xb, yb, m3x, m3y);
-                float d4 = getDistancia(xb, yb, m4x, m4y);
-                
-                float menord = d1;
-                
-                if (menord > d2) menord = d2;
-                if (menord > d3) menord = d3;
-                if (menord > d4) menord = d4;
-                
-                if (menord == d1){
-                    System.out.printf("\n bateu em cima da parede: %d",hole.getId());
-                    velY = -velY;
-                    y = hole.getY() - 2*raio;
-                }
-                
-                if (menord == d2){
-                    System.out.printf("\n bateu a esquerda da parede: %d",hole.getId());
-                    velX = -velX;
-                    x = hole.getX() - 2*raio;
-                }
-                
-                if (menord == d3){
-                    System.out.printf("\n bateu em baixo da parede: %d",hole.getId());
-                    velY = -velY;
-                    y = hole.getY() + hole.getAbsTamanhoH();
-                }
-                
-                if (menord == d4){
-                    System.out.printf("\n bateu a direita da parede: %d",hole.getId());
-                    velX = -velX;
-                    x = hole.getX() + hole.getAbsTamanhoW();
-                }
-                
-                break;
+                    break;
         } 
         
      }//for
