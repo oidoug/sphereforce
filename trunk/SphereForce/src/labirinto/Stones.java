@@ -28,7 +28,7 @@ public class Stones extends Cenario {
         super.fim = new Marca(marca_fim, Constantes.WINDOW_WIDTH - 100 - 40, Constantes.WINDOW_HEIGHT - 50 - 40);
 
         labirinto();
-        //super.buracos();
+        super.buracos();
         super.pedras();
     }
 

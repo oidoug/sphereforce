@@ -270,7 +270,8 @@ public class Esfera {
       for (Buraco hole : buracos){
         float distancia = getDistancia(x, y, hole.getX(), hole.getY());
         if (distancia < raio) 
-            x = y = 100;
+            x = Constantes.SPHERE_INIT_POINT_X;
+            y = Constantes.SPHERE_INIT_POINT_Y;
       }
     }
     
