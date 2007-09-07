@@ -164,15 +164,15 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         /* starts a conection */
         String ip = new String("localhost");
         servidor = true;
-//        servidor = false;
+        servidor = false;
         //descomentar caso for executar o cliente
         // passar o ip do servidor na construcao do objeto conn
-//        try {
-//            conn = new Conection(ip);
-//        }
-//        catch (Exception e){
-//            e.printStackTrace();
-//        }
+        try {
+            conn = new Conection(ip);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /** Paint all the images in the set, Applet`s default method */
@@ -195,14 +195,14 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 data.setKeyVector(keyVector);
 
                 if (servidor) {
-//                redsphere.refresh(conn);
+                    redsphere.refresh(conn);
                     bluesphere.refresh(keyVector, redsphere);
 
-//                    try {
-//                        conn.Send(data);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
+                    try {
+                        conn.Send(data);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     redsphere.refresh(keyVector, bluesphere);
 
@@ -245,11 +245,13 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     
     public void trataColisoes(){
         bluesphere.trataBuracos(cenario_stones.getBuracos());
-        //redsphere.trataBuracos(cenario_stones.getBuracos());
+        redsphere.trataBuracos(cenario_stones.getBuracos());
+        
         bluesphere.trataParedes(cenario_stones.getParedes());
-        //redsphere.trataParedes(fase01.getParedes());
+        redsphere.trataParedes(cenario_stones.getParedes());
+        
         bluesphere.trataPedras(cenario_stones.getPedras());
-        //redsphere.trataParedes(fase01.getPedras());
+        redsphere.trataPedras(cenario_stones.getPedras());
     }
 
     /** Thread method for the game Loop */
