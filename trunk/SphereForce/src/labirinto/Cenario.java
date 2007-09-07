@@ -22,6 +22,7 @@ public class Cenario {
 
     protected LinkedList<Parede> paredes;
     protected LinkedList<Buraco> buracos;
+    protected LinkedList<Pedra> pedras;
 
     protected Marca inicio;
     protected Marca fim;
@@ -29,19 +30,23 @@ public class Cenario {
     protected Image background;
     protected Image buraco;
     protected Image bloco;
+    protected Image pedra;
     protected Image marca_inicio;
     protected Image marca_fim;
 
     protected int dificuldade = 1; // 1 - 5
 
-    public Cenario(Image background, Image buraco, Image bloco, Image marca_inicio, Image marca_fim, int dificuldade) {
+    public Cenario(Image background, Image buraco, Image bloco, Image pedra, Image marca_inicio, Image marca_fim, int dificuldade) {
 
         paredes = new LinkedList<Parede>();
         buracos = new LinkedList<Buraco>();
+        pedras = new LinkedList<Pedra>();
+        
 
         this.background = background;
         this.buraco = buraco;
         this.bloco = bloco;
+        this.pedra = pedra;
         this.marca_inicio = marca_inicio;
         this.marca_fim = marca_fim;
 
@@ -59,6 +64,10 @@ public class Cenario {
     public Image getBuracoImg() {
         return buraco;
     }
+    
+    public Image getPedraImg() {
+        return pedra;
+    }
 
     public LinkedList<Parede> getParedes() {
         return paredes;
@@ -66,6 +75,10 @@ public class Cenario {
 
     public LinkedList<Buraco> getBuracos() {
         return buracos;
+    }
+    
+    public LinkedList<Pedra> getPedras() {
+        return pedras;
     }
 
 
@@ -98,6 +111,12 @@ public class Cenario {
             wall.paint(g);
         }
         /* END paredes */
+        
+        /* BEGIN pedras */
+        for (Pedra stone : pedras) {
+            stone.paint(g);
+        }
+        /* END pedras */
 
         /* BEGIN marcas */
         inicio.paint(g);
@@ -138,5 +157,10 @@ public class Cenario {
                 }
             } while (nBuracosOk <= dificuldade);
         }
+    }
+    
+    protected void pedras(){
+        pedras.add(new Pedra(pedra, 75, 250));
+        pedras.add(new Pedra(pedra, 200, 300));
     }
 }

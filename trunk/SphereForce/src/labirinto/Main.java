@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 
 import labirinto.core.*;
 
-//teste comit
 
 public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
 
@@ -129,6 +128,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         cenario_stones = new Stones(getImage(getDocumentBase(), "Background.png"),
                                     getImage(getDocumentBase(), "Buraco.png"),
                                     getImage(getDocumentBase(), "Bloco.png"),
+                                    getImage(getDocumentBase(), "Bloco.png"), //pedra
                                     getImage(getDocumentBase(), "Inicio.png"),
                                     getImage(getDocumentBase(), "Fim.png"),
                                     /*dificuldade facil:1-5:dificil*/ 2);
@@ -246,6 +246,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         //redsphere.trataBuracos(fase01.getBuracos());
         bluesphere.trataParedes(cenario_stones.getParedes());
         //redsphere.trataParedes(fase01.getParedes());
+        bluesphere.trataPedras(cenario_stones.getPedras());
+        //redsphere.trataParedes(fase01.getPedras());
         return false;
     }
 
