@@ -22,10 +22,16 @@ public class Constantes {
     
     
     /** ponto de inicio das esferas, depende de onde coloca-se o inicio */
-    public static int SPHERE_INIT_POINT_X = 50;
-    public static int SPHERE_INIT_POINT_Y = 25;
+    public static final int SPHERE_INIT_POINT_X = 50;
+    public static final int SPHERE_INIT_POINT_Y = 25;
     
+    /** usado para atualizar posicao e velocidade de uma esfera remota com seus
+     * dados reais remotos
+     */
+    public static final int REFRESH_SPHERE_TIME = 5;
     
+    public static final int DELAY = 33;
+    public static final int GET_SET_TIME = 20;
     public static final int DIVISOES_CANVAS = 2;
     
     public static final int WINDOW_WIDTH = 800;
@@ -35,6 +41,9 @@ public class Constantes {
     /** CONSTANTES PARA TRATAR TAMANHO DE IMAGENS */
     public static final int MARCA_W = 100;
     public static final int MARCA_H = 50;
+    
+    public static final int BOTTON_W = 200;
+    public static final int BOTTON_H = 40;
 
     public Constantes() {
     }
