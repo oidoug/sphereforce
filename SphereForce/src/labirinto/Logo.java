@@ -19,7 +19,7 @@ import java.util.LinkedList;
  */
 class Logo {
 
-    private final long OUT_TIME = 4000;
+    private final long OUT_TIME = 3000;
 
     private long stopTime;
     private long startTime;

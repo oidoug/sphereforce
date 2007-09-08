@@ -1,4 +1,3 @@
-
 package labirinto;
 
 /*
@@ -14,23 +13,23 @@ package labirinto;
 /**
  * Imports to Main
  */
+import java.applet.AudioClip;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.MediaTracker;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import labirinto.core.*;
 
 
 public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
 
     //constantes ambiente
-    public static final int DELAY = 33;
-
-    public static final float ACELER = 1.5f;
-    public static final float ATRITO = 0.87f;
+    public static final float ACELER = 1.5F;
+    public static final float ATRITO = 0.87F;
 
     //comandos
     public static final int UP = 0;
@@ -47,7 +46,9 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public static final int MENU = 2;
     public static final int LOGO = 3;
     public static final int EXIT = 4;
-    
+    public static final int WAITING_CLIENT = 5;
+    public static final int GET_SET = 6;
+
     public int state;
 
     private Thread gameLoop;
@@ -69,6 +70,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     private Logo logoscreen;
     private Menu menuscreen;
 
+    private AudioClip cenario_song;
+
 
     public static MediaTracker loading;
 
@@ -76,6 +79,9 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     private boolean servidor;
 
     private Stones cenario_stones;
+
+    /* getset counter */
+    private int getsetcount = 0;
 
     /** Starts Applet with page`s requiriment */
     @Override
@@ -115,30 +121,51 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
 
             initGame();
 
-            initConn();
-
             loading.waitForAll();
-            
         } catch (InterruptedException ex) {
             Logger.getLogger("global").log(Level.SEVERE, null, ex);
         }
     }
 
+    void startsAsClient(String ip) {
+        servidor = false;
+        ip = "localhost";
+
+        try {
+            conn = new Conection(ip);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        state = GET_SET;
+    }
+
+    void startsAsServer() {
+        servidor = true;
+
+        try {
+            conn = new Conection();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        state = GET_SET;
+
+        repaint();
+        System.out.println("repintou...");
+    }
+
     private void initGame() {
-        cenario_stones = new Stones(getImage(getDocumentBase(), "MarbleTexture.png"),
-                                    getImage(getDocumentBase(), "Buraco.png"),
-                                    getImage(getDocumentBase(), "Bloco.png"),
-                                    getImage(getDocumentBase(), "Pedra.png"),
-                                    getImage(getDocumentBase(), "Inicio.png"),
-                                    getImage(getDocumentBase(), "Fim.png"),
-                                    /*dificuldade facil:1-5:dificil*/ 4);
-        
+        cenario_stones = new Stones(getImage(getDocumentBase(), "cenario_stone/MarbleTexture.png"), getImage(getDocumentBase(), "cenario_stone/Buraco.png"), getImage(getDocumentBase(), "cenario_stone/Bloco.png"), getImage(getDocumentBase(), "cenario_stone/Pedra.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"), 4);
+
+        // nao funciona ainda
+        cenario_song = getAudioClip(getDocumentBase(), "SphereGear.mid");
+
         /* in,icializa uma esfera que guardara a ref da sua imagem */
         bluesphere = new Esfera(getImage(getDocumentBase(), "blueSphere30p.png"), (int) cenario_stones.inicio.getX() + 15, (int) cenario_stones.inicio.getY() + 12);
 
         /* inicializa uma esfera que guardara a ref da sua imagem */
         redsphere = new Esfera(getImage(getDocumentBase(), "redSphere30p.png"), (int) cenario_stones.inicio.getX() + 55, (int) cenario_stones.inicio.getY() + 12);
-        
     }
 
     /**
@@ -148,32 +175,16 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     private void initMenu() {
         /* intantiate the logo object and add a new logo */
         logoscreen = new Logo(this);
-        //logoscreen.addLogo(getImage(getDocumentBase(), "redSphere.png"), 120);
-        logoscreen.addLogo(getImage(getDocumentBase(), "qua.png"));
-        logoscreen.addLogo(getImage(getDocumentBase(), "barigada.png"));
+//        logoscreen.addLogo(getImage(getDocumentBase(), "redSphere.png"), 120);
+        logoscreen.addLogo(getImage(getDocumentBase(), "logo/qua.png"));
+        logoscreen.addLogo(getImage(getDocumentBase(), "logo/barigada.png"));
 
+        /** BEGIN Menu */
+        String[] buttons_strings = {"Play as Server", "Play as Client", "Help"};
         /* instantiate the button image, the background and game logo */
-        menuscreen = new Menu(this);
-        menuscreen.setImages(getImage(getDocumentBase(), "Marble.png"), getImage(getDocumentBase(), "Title.png"), getImage(getDocumentBase(), "Buttom.png"));
-    }
-
-    /**
-     * initConn() inicializa a conexao como servidor ou cliente
-     *
-     */
-    private void initConn() {
-        /* starts a conection */
-        String ip = new String("localhost");
-        servidor = true;
-        servidor = false;
-        //descomentar caso for executar o cliente
-        // passar o ip do servidor na construcao do objeto conn
-        try {
-            conn = new Conection(ip);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+        menuscreen = new Menu(this, buttons_strings);
+        menuscreen.setImages(getImage(getDocumentBase(), "menu/MenuBackground.png"), getImage(getDocumentBase(), "menu/SphereForceLogo.png"), getImage(getDocumentBase(), "menu/ButtonUp.png"), getImage(getDocumentBase(), "menu/ButtonDown.png"));
+        /** END Menu */
     }
 
     /** Paint all the images in the set, Applet`s default method */
@@ -193,18 +204,26 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                  *
                  */
                 DataGame data = new DataGame();
-                data.setKeyVector(keyVector);
+
 
                 if (servidor) {
+                    // sets all the data for the bluesphere (server)
+                    data.setAll(keyVector, bluesphere.getX(), bluesphere.getY(), bluesphere.getVelX(), bluesphere.getVelY());
+                    
+                    System.out.println("wainting client");
                     redsphere.refresh(conn);
+                    
                     bluesphere.refresh(keyVector, redsphere);
-
+                    cenario_song.play();
                     try {
                         conn.Send(data);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
+                    // sets all the data for the redsphere (client)
+                    data.setAll(keyVector, redsphere.getX(), redsphere.getY(), redsphere.getVelX(), redsphere.getVelY());
+
                     redsphere.refresh(keyVector, bluesphere);
 
                     try {
@@ -214,16 +233,15 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     }
                     bluesphere.refresh(conn);
                 }
-                
+
                 // pinta a fase na tela, com background, buracos e paredes
                 cenario_stones.paint(g);
-                
+
                 trataColisoes();
-                
+
                 // pinta ambas as esferas
                 bluesphere.paint(g);
                 redsphere.paint(g);
-                
                 break;
             case LOGO:
                 logoscreen.paint(g);
@@ -231,11 +249,34 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 break;
             case MENU:
                 menuscreen.paint(g);
-                
+
                 break;
             case GAME_STOP:
                 break;
             case EXIT:
+                break;
+                
+            case GET_SET:
+                /** nem queira ententer, eXtreme Late Programming! */
+//                cenario_stones.paint(g);
+//                bluesphere.paint(g);
+//                redsphere.paint(g);
+//                if (Constantes.GET_SET_TIME > getsetcount) {
+//                    g.setColor(Color.BLUE);
+//                    g.setFont(new Font("Arial", Font.BOLD, 50));
+//                    g.drawString("GET SET!", Constantes.WINDOW_WIDTH / 2, Constantes.WINDOW_HEIGHT / 2);
+//                    getsetcount++;
+//                }
+//                if (0 <= getsetcount) {
+//                    g.setColor(Color.RED);
+//                    g.setFont(new Font("Arial", Font.BOLD, 50));
+//                    g.drawString("GO!", Constantes.WINDOW_WIDTH / 2, Constantes.WINDOW_HEIGHT / 2);
+//                    getsetcount--;
+//                }
+//                if (getsetcount == -1) {
+//                    state = GAME_ON;
+//                }
+                state = GAME_ON;
                 break;
             default:
                 state = MENU;
@@ -243,14 +284,12 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         }
         ;
     }
-    
-    public void trataColisoes(){
+
+    public void trataColisoes() {
         bluesphere.trataBuracos(cenario_stones.getBuracos());
         redsphere.trataBuracos(cenario_stones.getBuracos());
-        
         bluesphere.trataParedes(cenario_stones.getParedes());
         redsphere.trataParedes(cenario_stones.getParedes());
-        
         bluesphere.trataPedras(cenario_stones.getPedras());
         redsphere.trataPedras(cenario_stones.getPedras());
     }
@@ -270,7 +309,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         while (Thread.currentThread() == gameLoop) {
             repaint();
             try {
-                startTime += DELAY;
+                startTime += Constantes.DELAY;
                 Thread.sleep(Math.max(0, startTime - System.currentTimeMillis()));
             } catch (InterruptedException e) {
                 break;
@@ -286,9 +325,15 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public void keyPressed(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
             keyVector[UP] = true;
+            if (state == MENU) {
+                menuscreen.keyUpTyped();
+            }
         }
         if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
             keyVector[DOWN] = true;
+            if (state == MENU) {
+                menuscreen.keyDownTyped();
+            }
         }
         if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
             keyVector[LEFT] = true;
@@ -298,9 +343,15 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         }
         if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
             keyVector[ENTER] = true;
+            if (state == MENU) {
+                menuscreen.keyEnterTyped();
+            }
         }
         if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
             keyVector[ESCAPE] = true;
+            if (state == MENU) {
+                menuscreen.keyEscapeTyped();
+            }
         }
     }
 
@@ -326,17 +377,24 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             keyVector[ESCAPE] = false;
         }
     }
-    
+
     /** Method keyWasPressed()
      * checks if in a game loop some key was or are pressed
      * is used in logo and menu mode
      */
     public boolean keyWasPressed() {
-        for (int i = 0; i< NUM_OF_KEYS; i++) {
-            if(keyVector[i]) {
+        for (int i = 0; i < NUM_OF_KEYS; i++) {
+            if (keyVector[i]) {
                 return true;
             }
         }
         return false;
+    }
+
+    /** Method keyVector(
+     * return the actual key vector
+     */
+    public boolean[] keyVector() {
+        return keyVector;
     }
 }

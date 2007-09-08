@@ -20,6 +20,8 @@ public class Conection {
     private InetAddress ipAddr;
     private boolean servidor;
     
+    private int port = 3000;
+    
     /** Creates a new instance of Conection */
     
     //cria instancia para o servidor
@@ -52,12 +54,17 @@ public class Conection {
         }
         else {
             sendPacket = new DatagramPacket
-                    (sendData, sendData.length, ipAddr, 3000);
+                    (sendData, sendData.length, ipAddr, port);
         }
         socket.send(sendPacket);
     }
     // sender para mensagens String
     public void Send(DataChat message) {
+        
+    }
+    
+    // receiver para mensagens String
+    public void Receive(DataChat message) {
         
     }
     
@@ -71,25 +78,18 @@ public class Conection {
         return data;
     }
     
-    // receiver para mensagens String
-    public void Receive(DataChat message) {
-        
-    }
-    
-    public void setKeys(boolean[] keyVector){
-        
-    }
-    public boolean[] getKeys() {
-        boolean keyVector[] = new boolean[Main.NUM_OF_KEYS];
+    /** Method getData()
+     * returns the Object DataGame data, captured by the connection instance
+     */
+    public DataGame getData() {
         DataGame data = new DataGame();
         try {
-             data = Receive();
+            data = Receive();
         }
         catch (Exception e){
             e.printStackTrace();
         }
-        keyVector = data.getKeyVector();
-        return keyVector;
+        return data;
     }
     
     public byte[] Serialize (DataGame data) throws Exception {
