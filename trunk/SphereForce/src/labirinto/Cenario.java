@@ -34,6 +34,8 @@ public class Cenario {
     protected Image pedra;
     protected Image marca_inicio;
     protected Image marca_fim;
+    
+    protected boolean servidor;
 
     protected int dificuldade = 1; // 1 - 5
 
@@ -43,7 +45,6 @@ public class Cenario {
         buracos = new LinkedList<Buraco>();
         pedras = new LinkedList<Pedra>();
 
-
         this.background = background;
         this.buraco = buraco;
         this.bloco = bloco;
@@ -52,6 +53,9 @@ public class Cenario {
         this.marca_fim = marca_fim;
 
         this.dificuldade = dificuldade;
+        this.servidor = servidor;
+        
+        
     }
 
     public Image getBlocoImg() {
@@ -80,6 +84,14 @@ public class Cenario {
 
     public LinkedList<Pedra> getPedras() {
         return pedras;
+    }
+    
+    public void setBuracos (LinkedList<Buraco> holes){
+        buracos = holes;
+    }
+    
+    public void setPedras (LinkedList<Pedra> stones){
+        pedras = stones;
     }
 
 
@@ -174,4 +186,13 @@ public class Cenario {
             }
         } while (nPedrasOk <= dificuldade);
     }
+    
+    protected int getQntBuracos(){
+        return buracos.size();
+    }
+    
+    protected int getQntPedras(){
+        return pedras.size();
+    }
+    
 }

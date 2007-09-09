@@ -12,14 +12,19 @@ package labirinto;
 import java.awt.Image;
 import labirinto.core.Parede;
 import labirinto.core.Marca;
+import java.util.LinkedList;
+import labirinto.core.Pedra;
+import labirinto.core.Buraco;
 
 /**
  *
  * @author Douglas Schmidt
  */
 public class Stones extends Cenario {
+    
 
-    public Stones(Image background, Image buraco, Image bloco, Image pedra, Image marca_inicio, Image marca_fim, int dificuldade) {
+    public Stones(Image background, Image buraco, Image bloco, Image pedra, Image marca_inicio, Image marca_fim,
+            int dificuldade) {
         
         super(background, buraco, bloco, pedra, marca_inicio, marca_fim, dificuldade);
 
@@ -28,8 +33,24 @@ public class Stones extends Cenario {
         super.fim = new Marca(marca_fim, Constantes.WINDOW_WIDTH - 100 - 40, Constantes.WINDOW_HEIGHT - 50 - 40);
 
         labirinto();
+    }
+    
+    public void gerarCenario(){
         super.buracos();
         super.pedras();
+    }
+    
+    public void gerarCenario( LinkedList<Buraco> buracos, LinkedList<Pedra> pedras){
+        super.setBuracos(buracos);
+        super.setPedras(pedras);
+    }
+    
+    public int nBuracos(){
+        return super.getQntBuracos();
+    }
+    
+    public int nPedras(){
+        return super.getQntPedras();
     }
 
     private void labirinto() {
