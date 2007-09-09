@@ -98,17 +98,17 @@ public class Esfera {
      */
     public void refresh(Conection conn) {
         DataGame data = conn.getData();
-
+        Main.chatON = data.getChatON();
         // time to time checks the time to take the right time to transcripts! A 13ts function!
         if (Constantes.REFRESH_SPHERE_TIME <= refreshTime) {
-            System.out.println("COPIO!");
+
             this.x = data.getX();
             this.y = data.getY();
             this.velX = data.getVelx();
             this.velY = data.getVely();
             refreshTime = 0;
         }
-        System.out.println("NAO COPIO!");
+
         refreshTime++;
         refresh(data.getKeyVector(), null);
     }
