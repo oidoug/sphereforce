@@ -48,6 +48,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public static final int EXIT = 4;
     public static final int WAITING_CLIENT = 5;
     public static final int GET_SET = 6;
+    public static final int CHAT_NOW = 7;
 
     public int state;
 
@@ -66,9 +67,10 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     private Esfera bluesphere;
     private Esfera redsphere;
 
-    /* classe de logo e menu */
+    /* classe de logo, menu e chat */
     private Logo logoscreen;
     private Menu menuscreen;
+    private Chat chatscreen;
 
     private AudioClip cenario_song;
 
@@ -82,6 +84,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
 
     /* getset counter */
     private int getsetcount = 0;
+    
+    public static boolean chatON;
 
     /** Starts Applet with page`s requiriment */
     @Override
@@ -136,8 +140,13 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        state = GET_SET;
+        /* AQUI DEVEMOS INSTANCIAR UMA CONEXAO TCP PARA ENVIAR AS STRINGS PELO CHAT
+        A CONEXAO CHAT SEMPRE SERA TCP, E COMO A CONEXAO UDP JA FOI INSTANCIADA
+        SERA POSSIVEL CRIAR UMA CONEXAO TCP SEM GRANDES PROBLEMAS, É SOH IMPLE
+        MENTAR A ROTINA DE CONEXAO NA CLASSE CONECTION QUE ESTA EM BRANCO.*/
+        chatscreen.connect(new Conection(Constantes.TCP_CON));
+        chatON = true;
+        state = CHAT_NOW;
     }
 
     void startsAsServer() {
@@ -148,11 +157,10 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        state = GET_SET;
-
-        repaint();
-        System.out.println("repintou...");
+        /* AQUI DEVEMOS INSTANCIAR UMA CONEXAO TCP PARA ENVIAR AS STRINGS PELO CHAT */
+        chatscreen.connect(new Conection(Constantes.TCP_CON));
+        chatON = true;
+        state = CHAT_NOW;
     }
 
     private void initGame() {
@@ -175,7 +183,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     private void initMenu() {
         /* intantiate the logo object and add a new logo */
         logoscreen = new Logo(this);
-//        logoscreen.addLogo(getImage(getDocumentBase(), "redSphere.png"), 120);
+        //        logoscreen.addLogo(getImage(getDocumentBase(), "redSphere.png"), 120);
         logoscreen.addLogo(getImage(getDocumentBase(), "logo/qua.png"));
         logoscreen.addLogo(getImage(getDocumentBase(), "logo/barigada.png"));
 
@@ -185,6 +193,10 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         menuscreen = new Menu(this, buttons_strings);
         menuscreen.setImages(getImage(getDocumentBase(), "menu/MenuBackground.png"), getImage(getDocumentBase(), "menu/SphereForceLogo.png"), getImage(getDocumentBase(), "menu/ButtonUp.png"), getImage(getDocumentBase(), "menu/ButtonDown.png"));
         /** END Menu */
+
+        /** BEGIN Chat */
+        chatscreen = new Chat(this, getImage(getDocumentBase(), "menu/ChatScreen.png"));
+        /** END Chat */
     }
 
     /** Paint all the images in the set, Applet`s default method */
@@ -194,6 +206,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         // check the actual application's state and update it
         switch (state) {
             case GAME_ON:
+                
                 /* sobre a conexao:
                  *
                  * o servidor sempre ficara esperando as coordenadas
@@ -204,14 +217,16 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                  *
                  */
                 DataGame data = new DataGame();
-
+                
 
                 if (servidor) {
                     // sets all the data for the bluesphere (server)
                     data.setAll(keyVector, bluesphere.getX(), bluesphere.getY(), bluesphere.getVelX(), bluesphere.getVelY());
+                    data.setChatON(chatON);
                     
                     System.out.println("wainting client");
                     redsphere.refresh(conn);
+
                     
                     bluesphere.refresh(keyVector, redsphere);
                     cenario_song.play();
@@ -223,7 +238,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 } else {
                     // sets all the data for the redsphere (client)
                     data.setAll(keyVector, redsphere.getX(), redsphere.getY(), redsphere.getVelX(), redsphere.getVelY());
-
+                    data.setChatON(chatON);
+                    
                     redsphere.refresh(keyVector, bluesphere);
 
                     try {
@@ -233,6 +249,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     }
                     bluesphere.refresh(conn);
                 }
+                
+                if(chatON) state = CHAT_NOW;
 
                 // pinta a fase na tela, com background, buracos e paredes
                 cenario_stones.paint(g);
@@ -255,29 +273,35 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 break;
             case EXIT:
                 break;
-                
             case GET_SET:
                 /** nem queira ententer, eXtreme Late Programming! */
-//                cenario_stones.paint(g);
-//                bluesphere.paint(g);
-//                redsphere.paint(g);
-//                if (Constantes.GET_SET_TIME > getsetcount) {
-//                    g.setColor(Color.BLUE);
-//                    g.setFont(new Font("Arial", Font.BOLD, 50));
-//                    g.drawString("GET SET!", Constantes.WINDOW_WIDTH / 2, Constantes.WINDOW_HEIGHT / 2);
-//                    getsetcount++;
-//                }
-//                if (0 <= getsetcount) {
-//                    g.setColor(Color.RED);
-//                    g.setFont(new Font("Arial", Font.BOLD, 50));
-//                    g.drawString("GO!", Constantes.WINDOW_WIDTH / 2, Constantes.WINDOW_HEIGHT / 2);
-//                    getsetcount--;
-//                }
-//                if (getsetcount == -1) {
-//                    state = GAME_ON;
-//                }
+                //                cenario_stones.paint(g);
+                //                bluesphere.paint(g);
+                //                redsphere.paint(g);
+                //                if (Constantes.GET_SET_TIME > getsetcount) {
+                //                    g.setColor(Color.BLUE);
+                //                    g.setFont(new Font("Arial", Font.BOLD, 50));
+                //                    g.drawString("GET SET!", Constantes.WINDOW_WIDTH / 2, Constantes.WINDOW_HEIGHT / 2);
+                //                    getsetcount++;
+                //                }
+                //                if (0 <= getsetcount) {
+                //                    g.setColor(Color.RED);
+                //                    g.setFont(new Font("Arial", Font.BOLD, 50));
+                //                    g.drawString("GO!", Constantes.WINDOW_WIDTH / 2, Constantes.WINDOW_HEIGHT / 2);
+                //                    getsetcount--;
+                //                }
+                //                if (getsetcount == -1) {
+                //                    state = GAME_ON;
+                //                }
                 state = GAME_ON;
                 break;
+            case CHAT_NOW:
+                this.cenario_stones.paint(g);
+                this.redsphere.paint(g);
+                this.bluesphere.paint(g);
+                chatscreen.paint(g);
+                break;
+                
             default:
                 state = MENU;
                 break;
@@ -317,8 +341,18 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         }
     }
 
+    /** Method ChatNow()
+     * opens the chat widget when the key Enter is pressed
+     * and closes and continue the game when Escape is pressed
+     */
+    public void ChatNow(Graphics g) {
+    }
 
     public void keyTyped(KeyEvent keyEvent) {
+        if (!keyEvent.isActionKey()) {
+            chatscreen.concatInInputMessage(KeyEvent.getKeyText(keyEvent.getKeyCode()));
+            System.out.println("Inputado: " + KeyEvent.getKeyText(keyEvent.getKeyCode()));
+        }
     }
 
     /** KeyPressed listener, set a vector with moving events */
@@ -345,12 +379,22 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             keyVector[ENTER] = true;
             if (state == MENU) {
                 menuscreen.keyEnterTyped();
+            } else if (state == GAME_ON) {
+                chatON = true;
+                state = CHAT_NOW;
+            } else if (state == CHAT_NOW) {
+                chatscreen.keyEnterTyped();
             }
         }
         if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
             keyVector[ESCAPE] = true;
             if (state == MENU) {
                 menuscreen.keyEscapeTyped();
+            } else if (state == CHAT_NOW) {
+                chatON = false;
+                chatscreen.keyEscapeTyped();
+            } else if (state == GAME_ON) {
+                this.quit();
             }
         }
     }
@@ -396,5 +440,9 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
      */
     public boolean[] keyVector() {
         return keyVector;
+    }
+
+    private void quit() {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

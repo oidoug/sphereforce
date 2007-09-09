@@ -44,8 +44,22 @@ public class Constantes {
     
     public static final int BOTTON_W = 200;
     public static final int BOTTON_H = 40;
-
+    
+    /* CONSTANTE PARA CHECAGEM DE TIPO DE CONEXAO */
+    public static final int TCP_CON = 0;
+    public static final int UDP_CON = 1;
+    
+    public static final int MAX_INPUT_CHAR = 30;
+    public static final int MAX_OUTPUT_LIST_SIZE = 15;
+    
+    public static final int CHAT_STRING_INIT_X = 250;
+    public static final int CHAT_STRING_OUTPUT_INIT_Y = 300;
+    public static final int CHAT_STRING_INPUT_INIT_Y = 400;
+    
+    public static final int CHAT_STRING_OUTPUT_SPACELINE = 15;
+    
     public Constantes() {
     }
+    
 
 }
