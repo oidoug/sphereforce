@@ -30,10 +30,11 @@ public class ConectionUdp {
     private byte[] receiveData;
 
     private InetAddress ipAddr;
-    private int porta;
+    private int portaServidor = 3000;
+    private int portaCliente;
     private boolean servidor;
     
-    private int port = 3000;
+    
     
     
     /** Creates a new instance of Conection */
@@ -41,7 +42,7 @@ public class ConectionUdp {
     //cria instancia para o servidor
     public ConectionUdp() throws Exception {
         servidor = true;
-        udp_socket = new DatagramSocket(3000);
+        udp_socket = new DatagramSocket(portaServidor);
     }
     
     //cria instancia para o cliente
@@ -63,11 +64,11 @@ public class ConectionUdp {
         if (servidor){
             sendPacket = 
                     new DatagramPacket
-                    (sendData,sendData.length,ipAddr,porta);
+                    (sendData,sendData.length,ipAddr,portaCliente);
         }
         else {
             sendPacket = new DatagramPacket
-                    (sendData, sendData.length, ipAddr, port);
+                    (sendData, sendData.length, ipAddr, portaServidor);
         }
 
         udp_socket.send(sendPacket);
@@ -75,9 +76,14 @@ public class ConectionUdp {
     
     // receiver para dados do jogo
     public DataGame Receive() throws Exception {
+        
         DataGame data;
         receiveData = new byte[300];
         receivePacket = new DatagramPacket(receiveData,receiveData.length);
+        if (servidor){
+            portaCliente = receivePacket.getPort();
+            ipAddr = receivePacket.getAddress();
+        }
         udp_socket.receive(receivePacket);
         data = UnSerialize(receivePacket.getData());
         return data;
@@ -117,4 +123,11 @@ public class ConectionUdp {
         return data;
     }
   
+    public InetAddress getIP(){
+        return this.ipAddr;
+    }
+    
+    public int getPort(){
+        return this.portaCliente;
+    }
 }

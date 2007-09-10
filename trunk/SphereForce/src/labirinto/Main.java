@@ -145,7 +145,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         servidor = false;
         state = GET_SET;
         ip = "localhost";
-        repaint();
+
         
         try {
             conTcp = new ConectionTcp(ip);
@@ -153,7 +153,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        chatON = true;
+        //chatON = true;
         chatscreen.connect(conTcp);
         
         //inicia os obstaculos
@@ -186,7 +186,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public void startsAsServer() {
         servidor = true;
         state = GET_SET;
-        repaint();
+ 
         
         try {
             conTcp = new ConectionTcp();
@@ -195,8 +195,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             e.printStackTrace();
         }
         System.out.println("passou reto.");
-        chatON = true;
-        chatscreen.connect(conTcp);
+        //chatON = true;
+       
         
         //inicia os obstaculos
         LinkedList<Buraco> buracos;
@@ -221,6 +221,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             e.printStackTrace();
         }
         
+        chatscreen.connect(conTcp);
         state = GAME_ON;
     }
     
@@ -292,7 +293,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     if(!chatON) {
                         
                         redsphere.refresh(this.conUdp);
-                        
+                        System.out.println(conUdp.getPort()+"ip = :"+conUdp.getIP());
                         bluesphere.refresh(keyVector, redsphere);
                         System.out.println("Chat Esta Ligado!");
                         try {

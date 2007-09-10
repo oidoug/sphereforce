@@ -89,6 +89,7 @@ public class Chat {
             applet.chatNow(true);
             outputs.addLast(message);
         }
+        System.out.println("remoteMessage: " + message);
     }
     
     void concatInInputMessage(char keyText) {
