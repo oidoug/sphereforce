@@ -24,8 +24,6 @@ public class DataGame implements Serializable {
     private float velx;
     private float vely;
 
-    private boolean chatON = false;
-
     private boolean[] keyVector;
 
     public DataGame() {
@@ -61,15 +59,6 @@ public class DataGame implements Serializable {
         return keyVector;
     }
     
-    /* seta se chat esta ativado nesta ponta */
-    public void setChatON(boolean chatON) {
-        this.chatON = chatON;        
-    }
-    
-    public boolean getChatON() {
-        return chatON;
-    }
-
     public void setAll(boolean[] keyVector, float x, float y, float velX, float velY) {
         this.keyVector = keyVector;
         this.x = x;
