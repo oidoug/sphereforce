@@ -195,4 +195,8 @@ public class Cenario {
         return pedras.size();
     }
     
+    protected Marca getFim(){
+        return fim;
+    }
+    
 }

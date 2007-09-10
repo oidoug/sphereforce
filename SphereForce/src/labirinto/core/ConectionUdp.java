@@ -62,6 +62,7 @@ public class ConectionUdp {
         catch (Exception e){
             e.printStackTrace();
         }
+        
         if (servidor){
             sendPacket = 
                     new DatagramPacket
@@ -82,11 +83,13 @@ public class ConectionUdp {
         DataGame data;
         receiveData = new byte[300];
         receivePacket = new DatagramPacket(receiveData,receiveData.length);
+        udp_socket.receive(receivePacket);
         if (servidor){
+            
             portaCliente = receivePacket.getPort();
             ipAddr = receivePacket.getAddress();
+        
         }
-        udp_socket.receive(receivePacket);
         data = UnSerialize(receivePacket.getData());
         return data;
     }

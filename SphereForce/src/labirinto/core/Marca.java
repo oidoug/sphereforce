@@ -59,36 +59,5 @@ public class Marca {
     public void paint(Graphics g) {
         g.drawImage(marca, (int)x, (int)y, null);
     }
-    
-    public boolean colideCom(Esfera esfera){
-        
-        boolean colide = false;
-        
-        if ((esfera.getY() > y - esfera.getRaio()) &&
-                (esfera.getY() < y + Constantes.MARCA_H + esfera.getRaio())){
-           
-            if ( (esfera.getX() - x) < (esfera.getX() + 2*esfera.getRaio()) ){
-                colide =  true;
-            }
-            
-            else if ((x + Constantes.MARCA_W + esfera.getRaio()) > esfera.getX()){
-                colide = true;
-            }
-        }
-        
-        if ((esfera.getX() > x - esfera.getRaio()) &&
-                (esfera.getX() < x + Constantes.MARCA_W + esfera.getRaio()) ) {
-            
-            if ( (esfera.getY() - y) < (esfera.getY() + 2*esfera.getRaio()) ) {
-                colide = true;
-            }
-            
-            else if ((y + Constantes.MARCA_H + esfera.getRaio()) > esfera.getY()) {
-                colide = true;
-            }
-        }
-        
-        return colide;
-    }
 
 }
