@@ -14,7 +14,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.LinkedList;
-import labirinto.core.Conection;
+import labirinto.core.ConectionTcp;
 import labirinto.core.DataChat;
 
 /**
@@ -25,7 +25,7 @@ public class Chat {
 
     private Main applet;
     private Image chat_image;
-    private Conection conn;
+    private ConectionTcp conn;
     private ChatReceive receiveThread;
 
     private String input;
@@ -45,51 +45,55 @@ public class Chat {
         
         g.drawImage(chat_image, 0, 0, applet);
         g.setColor(Color.GREEN);
-        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.setFont(new Font("Arial", Font.BOLD, 18));
         if (input.length() > Constantes.MAX_INPUT_CHAR) {
             g.drawString(input.substring(input.length() - Constantes.MAX_INPUT_CHAR, input.length()), Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_INPUT_INIT_Y);
         } else {
             g.drawString(input, Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_INPUT_INIT_Y);
         }
-
-        int stringscreenposition = 0;
-        for (String output : outputs) {
-            stringscreenposition++;
-//            if (output.length() / Constantes.MAX_INPUT_CHAR > 1) {
-            for (int i = 0; i < (int) output.length() / Constantes.MAX_INPUT_CHAR; i++) {
-                g.drawString(output.substring(Constantes.MAX_INPUT_CHAR * i, Constantes.MAX_INPUT_CHAR * i + Constantes.MAX_INPUT_CHAR), Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_INPUT_INIT_Y + Constantes.CHAT_STRING_OUTPUT_SPACELINE * i);
+        
+        boolean colorDif = false;
+        for (int i = 0; i < outputs.size(); i++) {
+            if (applet.servidor) {
+                g.setColor(Color.BLUE);
+                colorDif = false;
+            } else {
+                g.setColor(Color.RED);
+                colorDif = true;
             }
-//            }
+            g.drawString(outputs.get(i), Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_OUTPUT_INIT_Y + Constantes.CHAT_STRING_OUTPUT_SPACELINE * i);
         }
-        System.out.println("ATUALIZANDO CHAT: INPUT: " + input);
     }
 
     public void keyEnterTyped() {
+        if(outputs.size() > Constantes.MAX_OUTPUT_LIST_SIZE) {
+            outputs.removeFirst();
+        }
         outputs.addLast(input);
-        DataChat data = new DataChat();
-        data.setMessage(input);
-        conn.Send(data);
+        
+        /** Aqui temos q ver como o dado sera mandado */
+//        DataChat data = new DataChat();
+//        data.setMessage(input.toUpperCase());
+//        conn.Send(data);
         input = "";
     }
 
     public void keyEscapeTyped() {
-        if (outputs.size() >= Constantes.MAX_OUTPUT_LIST_SIZE) {
-            outputs.clear();
-        }
         applet.state = Main.GAME_ON;
     }
 
     public void remoteMessage(String message) {
+        applet.chatNow();
         outputs.addLast(message);
     }
 
-    void concatInInputMessage(String keyText) {
-        input.concat(keyText);
-        System.out.println("catenado: "+ keyText);
+    void concatInInputMessage(char keyText) {
+        input = input.concat(String.valueOf(keyText));
+        System.out.println("catenado: "+ String.valueOf(keyText) + " : " +  input);
     }
 
-    void connect(Conection conection) {
+    void connect(ConectionTcp conection) {
         this.conn = conection;
-        receiveThread = new ChatReceive(conn);
+        receiveThread = new ChatReceive(conn, this);
     }
 }

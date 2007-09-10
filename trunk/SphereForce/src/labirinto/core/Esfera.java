@@ -96,9 +96,9 @@ public class Esfera {
      *  from the package received times in times (defined by Constant.REFRESH_SPHERE_TIME).
      *  This should keep the things working...
      */
-    public void refresh(Conection conn) {
+    public void refresh(ConectionUdp conn) {
         DataGame data = conn.getData();
-        Main.chatON = data.getChatON();
+        
         // time to time checks the time to take the right time to transcripts! A 13ts function!
         if (Constantes.REFRESH_SPHERE_TIME <= refreshTime) {
 

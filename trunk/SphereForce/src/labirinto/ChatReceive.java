@@ -9,7 +9,7 @@
 
 package labirinto;
 
-import labirinto.core.Conection;
+import labirinto.core.ConectionTcp;
 
 /**
  *
@@ -18,12 +18,16 @@ import labirinto.core.Conection;
 public class ChatReceive implements Runnable{
 
     private Thread receive;
-    private Conection tcp;
+    private ConectionTcp tcp;
+    private Chat chat;
     private String message;
     
-    public ChatReceive(Conection tcp) {
+    public ChatReceive(ConectionTcp tcp, Chat chat) {
         receive = new Thread();
+        
         this.tcp = tcp;
+        this.chat = chat;
+        
         receive.start();
     }
     
@@ -33,7 +37,13 @@ public class ChatReceive implements Runnable{
 
     public void run() {
         while(!receive.interrupted()) {
-            tcp.getData(message);
+            try {
+                message = tcp.Receive();
+                chat.remoteMessage(message);
+                
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
     

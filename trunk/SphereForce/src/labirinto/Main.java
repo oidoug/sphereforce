@@ -20,17 +20,18 @@ import java.awt.Graphics;
 import java.awt.MediaTracker;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import labirinto.core.*;
 
 
 public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
-
+    
     //constantes ambiente
     public static final float ACELER = 1.5F;
     public static final float ATRITO = 0.87F;
-
+    
     //comandos
     public static final int UP = 0;
     public static final int DOWN = 1;
@@ -38,9 +39,9 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public static final int RIGHT = 3;
     public static final int ENTER = 4;
     public static final int ESCAPE = 5;
-
+    
     public static final int NUM_OF_KEYS = 6;
-
+    
     public static final int GAME_ON = 0;
     public static final int GAME_STOP = 1;
     public static final int MENU = 2;
@@ -49,11 +50,11 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public static final int WAITING_CLIENT = 5;
     public static final int GET_SET = 6;
     public static final int CHAT_NOW = 7;
-
+    
     public int state;
-
+    
     private Thread gameLoop;
-
+    
     /** Vector [5] with:
      *0 = UP
      *1 = DOWN
@@ -62,31 +63,37 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
      *4 = ESCAPE
      */
     private boolean[] keyVector;
-
+    
     /* instancia para os objetos utilizados durante o jogo */
     private Esfera bluesphere;
     private Esfera redsphere;
-
+    
     /* classe de logo, menu e chat */
     private Logo logoscreen;
     private Menu menuscreen;
     private Chat chatscreen;
-
+    
     private AudioClip cenario_song;
-
-
+    
+    
     public static MediaTracker loading;
-
-    private Conection conn;
-    private boolean servidor;
-
+    
+    private ConectionTcp conTcp;
+    private ConectionUdp conUdp;
+    
+    public boolean servidor;
+    
     private Stones cenario_stones;
-
+    
     /* getset counter */
     private int getsetcount = 0;
     
     public static boolean chatON;
-
+    
+    private Image chat_image;
+    
+    private String ip;
+    
     /** Starts Applet with page`s requiriment */
     @Override
     public void start() {
@@ -94,88 +101,138 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         gameLoop = new Thread(this);
         gameLoop.start();
     }
-
+    
     /** Stop Applet when user leave the page */
     @Override
     public void stop() {
         state = EXIT;
     }
-
+    
     /** Destroy Applet before leave the page */
     public void destroy() {
     }
-
+    
     /** Init called in the very first applet`s run */
     @Override
     public void init() {
         try {
-
+            
             //set applet window size
             this.setSize(Constantes.WINDOW_WIDTH, Constantes.WINDOW_HEIGHT);
-
+            
             keyVector = new boolean[NUM_OF_KEYS];
-
+            
             /* Controla as entradas do teclado */
             this.addKeyListener(this);
-
+            
             //wait for all images get ready to show everthing synchronously
             loading = new java.awt.MediaTracker(this);
-
+            
             initMenu();
-
+            
             initGame();
-
+            
             loading.waitForAll();
         } catch (InterruptedException ex) {
             Logger.getLogger("global").log(Level.SEVERE, null, ex);
         }
     }
-
-    void startsAsClient(String ip) {
+    
+    
+    
+    public void startsAsClient(String ip) {
         servidor = false;
         ip = "localhost";
-
+        
         try {
-            conn = new Conection(ip);
+            conTcp = new ConectionTcp(ip);
+            conUdp = new ConectionUdp(ip);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        /* AQUI DEVEMOS INSTANCIAR UMA CONEXAO TCP PARA ENVIAR AS STRINGS PELO CHAT
-        A CONEXAO CHAT SEMPRE SERA TCP, E COMO A CONEXAO UDP JA FOI INSTANCIADA
-        SERA POSSIVEL CRIAR UMA CONEXAO TCP SEM GRANDES PROBLEMAS, É SOH IMPLE
-        MENTAR A ROTINA DE CONEXAO NA CLASSE CONECTION QUE ESTA EM BRANCO.*/
-        chatscreen.connect(new Conection(Constantes.TCP_CON));
         chatON = true;
+        chatscreen.connect(conTcp);
+        
+        //inicia os obstaculos
+        LinkedList<Buraco> buracos;
+        LinkedList<Pedra> pedras;
+        
+        try {
+            
+            conTcp.receiveQnts();
+            int nburacos = conTcp.getQntBuraco();
+            int npedras = conTcp.getQntPedra();
+            System.out.println("qntdade buracos ="+nburacos+"   qnt pedras="+npedras);
+            
+            buracos = new LinkedList<Buraco>();
+            for (int i=0; i < nburacos; i++)
+                buracos.add( conTcp.getHole(getImage(getDocumentBase(), "cenario_stone/Buraco.png") ) ); //pega os buracos
+            
+            pedras = new LinkedList<Pedra>();
+            for (int i=0; i < npedras; i++)
+                pedras.add( conTcp.getStone( getImage(getDocumentBase(), "cenario_stone/Pedra.png") ) );
+            
+            cenario_stones.gerarCenario(buracos,pedras);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
         state = CHAT_NOW;
     }
-
-    void startsAsServer() {
+    
+    public void startsAsServer() {
         servidor = true;
-
+        
         try {
-            conn = new Conection();
+            conTcp = new ConectionTcp();
+            conUdp = new ConectionUdp();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        /* AQUI DEVEMOS INSTANCIAR UMA CONEXAO TCP PARA ENVIAR AS STRINGS PELO CHAT */
-        chatscreen.connect(new Conection(Constantes.TCP_CON));
         chatON = true;
+        chatscreen.connect(conTcp);
+        
+        //inicia os obstaculos
+        LinkedList<Buraco> buracos;
+        LinkedList<Pedra> pedras;
+        
+        try {
+            System.out.println("qntdade buracos ="+cenario_stones.nBuracos()+"   qnt pedras="+cenario_stones.nPedras());
+            conTcp.Send(cenario_stones.nBuracos(), cenario_stones.nPedras());
+            
+            buracos = cenario_stones.getBuracos();
+            for (Buraco holes : buracos){
+                conTcp.Send(holes);
+            }
+            
+            pedras = cenario_stones.getPedras();
+            for (Pedra stones : pedras){
+                conTcp.Send(stones);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        
         state = CHAT_NOW;
     }
-
+    
+    public void chatNow() {
+        chatON = true;
+    }
+    
     private void initGame() {
         cenario_stones = new Stones(getImage(getDocumentBase(), "cenario_stone/MarbleTexture.png"), getImage(getDocumentBase(), "cenario_stone/Buraco.png"), getImage(getDocumentBase(), "cenario_stone/Bloco.png"), getImage(getDocumentBase(), "cenario_stone/Pedra.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"), 4);
-
+        
         // nao funciona ainda
-        cenario_song = getAudioClip(getDocumentBase(), "SphereGear.mid");
-
+        cenario_song = getAudioClip(getDocumentBase(), "sound/SphereGear.mid");
+        
         /* in,icializa uma esfera que guardara a ref da sua imagem */
         bluesphere = new Esfera(getImage(getDocumentBase(), "blueSphere30p.png"), (int) cenario_stones.inicio.getX() + 15, (int) cenario_stones.inicio.getY() + 12);
-
+        
         /* inicializa uma esfera que guardara a ref da sua imagem */
         redsphere = new Esfera(getImage(getDocumentBase(), "redSphere30p.png"), (int) cenario_stones.inicio.getX() + 55, (int) cenario_stones.inicio.getY() + 12);
     }
-
+    
     /**
      * initMenu() inicializa as imagens para a chamada do menu interativo
      *
@@ -186,23 +243,24 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         //        logoscreen.addLogo(getImage(getDocumentBase(), "redSphere.png"), 120);
         logoscreen.addLogo(getImage(getDocumentBase(), "logo/qua.png"));
         logoscreen.addLogo(getImage(getDocumentBase(), "logo/barigada.png"));
-
+        
         /** BEGIN Menu */
         String[] buttons_strings = {"Play as Server", "Play as Client", "Help"};
         /* instantiate the button image, the background and game logo */
         menuscreen = new Menu(this, buttons_strings);
         menuscreen.setImages(getImage(getDocumentBase(), "menu/MenuBackground.png"), getImage(getDocumentBase(), "menu/SphereForceLogo.png"), getImage(getDocumentBase(), "menu/ButtonUp.png"), getImage(getDocumentBase(), "menu/ButtonDown.png"));
         /** END Menu */
-
+        
         /** BEGIN Chat */
-        chatscreen = new Chat(this, getImage(getDocumentBase(), "menu/ChatScreen.png"));
+        this.chat_image = getImage(getDocumentBase(), "menu/ChatScreen.png");
+        chatscreen = new Chat(this, this.chat_image);
         /** END Chat */
     }
-
+    
     /** Paint all the images in the set, Applet`s default method */
     @Override
     public void paint(Graphics g) {
-
+        
         // check the actual application's state and update it
         switch (state) {
             case GAME_ON:
@@ -218,61 +276,69 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                  */
                 DataGame data = new DataGame();
                 
-
+                
                 if (servidor) {
                     // sets all the data for the bluesphere (server)
                     data.setAll(keyVector, bluesphere.getX(), bluesphere.getY(), bluesphere.getVelX(), bluesphere.getVelY());
-                    data.setChatON(chatON);
                     
-                    System.out.println("wainting client");
-                    redsphere.refresh(conn);
-
-                    
-                    bluesphere.refresh(keyVector, redsphere);
-                    cenario_song.play();
-                    try {
-                        conn.Send(data);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if(!chatON) {
+                        
+                        redsphere.refresh(this.conUdp);
+                        
+                        bluesphere.refresh(keyVector, redsphere);
+                        
+                        try {
+                            conUdp.Send(data);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
-                    // sets all the data for the redsphere (client)
-                    data.setAll(keyVector, redsphere.getX(), redsphere.getY(), redsphere.getVelX(), redsphere.getVelY());
-                    data.setChatON(chatON);
-                    
-                    redsphere.refresh(keyVector, bluesphere);
-
-                    try {
-                        conn.Send(data);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if(!chatON) {
+                        // sets all the data for the redsphere (client)
+                        data.setAll(keyVector, redsphere.getX(), redsphere.getY(), redsphere.getVelX(), redsphere.getVelY());
+                        
+                        redsphere.refresh(keyVector, bluesphere);
+                        
+                        try {
+                            conUdp.Send(data);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        bluesphere.refresh(conUdp);
                     }
-                    bluesphere.refresh(conn);
                 }
                 
-                if(chatON) state = CHAT_NOW;
-
-                // pinta a fase na tela, com background, buracos e paredes
-                cenario_stones.paint(g);
-
-                trataColisoes();
-
-                // pinta ambas as esferas
-                bluesphere.paint(g);
-                redsphere.paint(g);
+                if(chatON) {
+                    state = CHAT_NOW;
+                } else {
+                    // pinta a fase na tela, com background, buracos e paredes
+                    cenario_stones.paint(g);
+                    
+                    trataColisoes();
+                    
+                    // pinta ambas as esferas
+                    bluesphere.paint(g);
+                    redsphere.paint(g);
+                }
                 break;
+                
             case LOGO:
                 logoscreen.paint(g);
-
+                
                 break;
+                
             case MENU:
                 menuscreen.paint(g);
-
+                
                 break;
+                
             case GAME_STOP:
                 break;
+                
             case EXIT:
                 break;
+                
             case GET_SET:
                 /** nem queira ententer, eXtreme Late Programming! */
                 //                cenario_stones.paint(g);
@@ -293,8 +359,18 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 //                if (getsetcount == -1) {
                 //                    state = GAME_ON;
                 //                }
+                g.drawImage(chat_image, 0, 0, this);
+                g.setColor(Color.GREEN);
+                g.setFont(new Font("Arial", Font.BOLD, 18));
+                if (ip.length() > Constantes.MAX_INPUT_CHAR) {
+                    g.drawString(ip.substring(ip.length() - Constantes.MAX_INPUT_CHAR, ip.length()), Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_INPUT_INIT_Y);
+                } else {
+                    g.drawString(ip, Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_INPUT_INIT_Y);
+                }
+                
                 state = GAME_ON;
                 break;
+                
             case CHAT_NOW:
                 this.cenario_stones.paint(g);
                 this.redsphere.paint(g);
@@ -305,10 +381,11 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             default:
                 state = MENU;
                 break;
+                
         }
         ;
     }
-
+    
     public void trataColisoes() {
         bluesphere.trataBuracos(cenario_stones.getBuracos());
         redsphere.trataBuracos(cenario_stones.getBuracos());
@@ -317,19 +394,19 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         bluesphere.trataPedras(cenario_stones.getPedras());
         redsphere.trataPedras(cenario_stones.getPedras());
     }
-
+    
     /** Thread method for the game Loop */
-
+    
     public void run() {
         /* apresenta logos dos developers e outros e do jogo */
         /* mostra menu principal, conf de velocidade, dificuldade e tamanho tela */
-
+        
         /* começa o jogo, mostra cenario etc */
-
+        
         long startTime;
         startTime = System.currentTimeMillis();
-
-
+        
+        
         while (Thread.currentThread() == gameLoop) {
             repaint();
             try {
@@ -340,21 +417,17 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             }
         }
     }
-
-    /** Method ChatNow()
-     * opens the chat widget when the key Enter is pressed
-     * and closes and continue the game when Escape is pressed
-     */
-    public void ChatNow(Graphics g) {
-    }
-
+    
     public void keyTyped(KeyEvent keyEvent) {
-        if (!keyEvent.isActionKey()) {
-            chatscreen.concatInInputMessage(KeyEvent.getKeyText(keyEvent.getKeyCode()));
-            System.out.println("Inputado: " + KeyEvent.getKeyText(keyEvent.getKeyCode()));
+        if (state == CHAT_NOW) {
+            if (!keyEvent.isActionKey()) {
+                chatscreen.concatInInputMessage(keyEvent.getKeyChar());
+            }
+        } else if (state == GET_SET) {
+            this.ip = ip.concat(String.valueOf(keyEvent.getKeyChar()));
         }
     }
-
+    
     /** KeyPressed listener, set a vector with moving events */
     public void keyPressed(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
@@ -398,9 +471,9 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             }
         }
     }
-
+    
     /** KeyReleased listener */
-
+    
     public void keyReleased(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
             keyVector[UP] = false;
@@ -421,7 +494,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             keyVector[ESCAPE] = false;
         }
     }
-
+    
     /** Method keyWasPressed()
      * checks if in a game loop some key was or are pressed
      * is used in logo and menu mode
@@ -434,14 +507,14 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         }
         return false;
     }
-
+    
     /** Method keyVector(
      * return the actual key vector
      */
     public boolean[] keyVector() {
         return keyVector;
     }
-
+    
     private void quit() {
         throw new UnsupportedOperationException("Not yet implemented");
     }

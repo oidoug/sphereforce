@@ -50,11 +50,11 @@ public class Constantes {
     public static final int UDP_CON = 1;
     
     public static final int MAX_INPUT_CHAR = 30;
-    public static final int MAX_OUTPUT_LIST_SIZE = 15;
+    public static final int MAX_OUTPUT_LIST_SIZE = 8;
     
     public static final int CHAT_STRING_INIT_X = 250;
-    public static final int CHAT_STRING_OUTPUT_INIT_Y = 300;
-    public static final int CHAT_STRING_INPUT_INIT_Y = 400;
+    public static final int CHAT_STRING_OUTPUT_INIT_Y = 200;
+    public static final int CHAT_STRING_INPUT_INIT_Y = 360;
     
     public static final int CHAT_STRING_OUTPUT_SPACELINE = 15;
     
