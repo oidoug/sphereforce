@@ -99,7 +99,7 @@ public class ConectionTcp {
     
 
     // receiver para mensagens String
-    public String Receive() throws Exception {
+    public String getString() throws Exception {
         String message = new String();
         try {
             message = (String) input.readObject();
