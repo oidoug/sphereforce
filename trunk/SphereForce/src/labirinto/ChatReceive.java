@@ -38,7 +38,7 @@ public class ChatReceive implements Runnable{
     public void run() {
         while(!receive.interrupted()) {
             try {
-                message = tcp.Receive();
+                message = tcp.getString();
                 chat.remoteMessage(message);
                 
             } catch (Exception ex) {

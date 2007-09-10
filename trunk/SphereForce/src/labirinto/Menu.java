@@ -118,10 +118,7 @@ public class Menu {
         if (selected_button == 1) {
             Label ip_input = new Label("Enter a valid IP:");
             TextField ip_string = new TextField();
-            String ip = ip_string.getText();
-            applet.add(ip_input);
-            applet.add(ip_string);
-            applet.startsAsClient(ip);
+            applet.startsAsClient();
         }
         if (selected_button == 2) {
             this.showHelp();

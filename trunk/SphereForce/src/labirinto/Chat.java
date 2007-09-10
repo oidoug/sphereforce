@@ -22,22 +22,22 @@ import labirinto.core.DataChat;
  * @author Douglas Schmidt
  */
 public class Chat {
-
+    
     private Main applet;
     private Image chat_image;
     private ConectionTcp conn;
     private ChatReceive receiveThread;
-
+    
     private String input;
     private LinkedList<String> outputs;
-
+    
     public Chat(Main applet, Image chat_image) {
         this.applet = applet;
         this.chat_image = chat_image;
         input = new String();
         outputs = new LinkedList<String>();
     }
-
+    
     public void paint(Graphics g) {
         if (!receiveThread.isRunning()) {
             receiveThread.recover();
@@ -64,7 +64,7 @@ public class Chat {
             g.drawString(outputs.get(i), Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_OUTPUT_INIT_Y + Constantes.CHAT_STRING_OUTPUT_SPACELINE * i);
         }
     }
-
+    
     public void keyEnterTyped() {
         if(outputs.size() > Constantes.MAX_OUTPUT_LIST_SIZE) {
             outputs.removeFirst();
@@ -77,21 +77,29 @@ public class Chat {
 //        conn.Send(data);
         input = "";
     }
-
+    
     public void keyEscapeTyped() {
         applet.state = Main.GAME_ON;
     }
-
+    
     public void remoteMessage(String message) {
-        applet.chatNow();
-        outputs.addLast(message);
+        if(message.equals("&")) {
+            applet.chatNow(false);
+        } else {
+            applet.chatNow(true);
+            outputs.addLast(message);
+        }
     }
-
+    
     void concatInInputMessage(char keyText) {
         input = input.concat(String.valueOf(keyText));
         System.out.println("catenado: "+ String.valueOf(keyText) + " : " +  input);
     }
-
+    
+    void unConcatInInputMessage() {
+        input = input.substring(0, input.length() - 1);
+    }
+    
     void connect(ConectionTcp conection) {
         this.conn = conection;
         receiveThread = new ChatReceive(conn, this);
