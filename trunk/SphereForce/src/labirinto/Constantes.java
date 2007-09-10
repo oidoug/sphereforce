@@ -17,6 +17,8 @@ public class Constantes {
     
     public static final int TAMANHO_BLOCO = 20;
     
+    public static final int TAMANHO_RAIO_ESFERAS = 15;
+    
     public static final int BACKGROUND_W = 50;
     public static final int BACKGROUND_H = 50;
     

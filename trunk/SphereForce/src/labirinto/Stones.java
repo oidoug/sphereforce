@@ -44,19 +44,11 @@ public class Stones extends Cenario {
         super.setBuracos(buracos);
         super.setPedras(pedras);
     }
-    
-    public int nBuracos(){
-        return super.getQntBuracos();
-    }
-    
-    public int nPedras(){
-        return super.getQntPedras();
-    }
 
     private void labirinto() {
 
         paredes.add(new Parede(bloco, 40, false, 0, Constantes.TAMANHO_BLOCO * 29, 1));
-        paredes.add(new Parede(bloco, 30, true, 0, 0, 2));
+        //paredes.add(new Parede(bloco, 30, true, 0, 0, 2));
         paredes.add(new Parede(bloco, 40, false, 0, 0, 3));
         paredes.add(new Parede(bloco, 30, true, Constantes.TAMANHO_BLOCO * 39, 0, 4));
 

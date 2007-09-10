@@ -95,6 +95,9 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     
     private String ip;
     
+    private int bluePoint = 0;
+    private int redPoint = 0;
+    
     /** Starts Applet with page`s requiriment */
     @Override
     public void start() {
@@ -169,7 +172,6 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             conTcp.receiveQnts();
             int nburacos = conTcp.getQntBuraco();
             int npedras = conTcp.getQntPedra();
-            System.out.println("qntdade buracos ="+nburacos+"   qnt pedras="+npedras);
             
             buracos = new LinkedList<Buraco>();
             for (int i=0; i < nburacos; i++)
@@ -207,7 +209,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
 //        chatON = true;
         chatscreen.connect(conTcp);
 
-        
+        System.out.println(conUdp.toString());
         //inicia os obstaculos
         LinkedList<Buraco> buracos;
         LinkedList<Pedra> pedras;
@@ -215,8 +217,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         cenario_stones.gerarCenario();
         
         try {
-            System.out.println("qntdade buracos ="+cenario_stones.nBuracos()+"   qnt pedras="+cenario_stones.nPedras());
-            conTcp.Send(cenario_stones.nBuracos(), cenario_stones.nPedras());
+            conTcp.Send(cenario_stones.getQntBuracos(), cenario_stones.getQntPedras());
             
             buracos = cenario_stones.getBuracos();
             for (Buraco holes : buracos){
@@ -305,6 +306,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     if(!chatON) {
                         
                         redsphere.refresh(this.conUdp);
+                        
                         System.out.println(conUdp.getPort()+"ip = :"+conUdp.getIP());
                         bluesphere.refresh(keyVector, redsphere);
                         System.out.println("Chat Esta Ligado!");
@@ -320,7 +322,6 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                         data.setAll(keyVector, redsphere.getX(), redsphere.getY(), redsphere.getVelX(), redsphere.getVelY());
                         
                         redsphere.refresh(keyVector, bluesphere);
-                        System.out.println("Chat Esta Ligado!");
                         try {
                             conUdp.Send(data);
                         } catch (Exception e) {
@@ -336,11 +337,34 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     // pinta a fase na tela, com background, buracos e paredes
                     cenario_stones.paint(g);
                     
-                    trataColisoes();
-                    
-                    // pinta ambas as esferas
-                    bluesphere.paint(g);
-                    redsphere.paint(g);
+                    if (trataColisoes() == 1){
+                        this.bluePoint++;
+                        respaw();
+                    }
+                    else if (trataColisoes() == 2){
+                        this.redPoint++;
+                        respaw();
+                    }
+                    else {
+                        // pinta ambas as esferas
+                        if (servidor){
+                            g.setFont(new Font("Arial", Font.BOLD, 36));
+                            g.setColor(Color.BLUE);
+                            g.drawString(String.valueOf(bluePoint),Constantes.WINDOW_WIDTH/2-50,Constantes.TAMANHO_BLOCO*3);
+                            g.setColor(Color.RED);
+                            g.drawString(String.valueOf(redPoint),Constantes.WINDOW_WIDTH/2+10,Constantes.TAMANHO_BLOCO*3);
+                        }
+                        else {
+                            g.setFont(new Font("Arial", Font.BOLD, 36));
+                            g.setColor(Color.RED);
+                            g.drawString(String.valueOf(redPoint),Constantes.WINDOW_WIDTH/2-50,Constantes.TAMANHO_BLOCO*3);
+                            g.setColor(Color.BLUE);
+                            g.drawString(String.valueOf(bluePoint),Constantes.WINDOW_WIDTH/2+10,Constantes.TAMANHO_BLOCO*3);                            
+                        }
+                        bluesphere.paint(g);
+                        redsphere.paint(g);
+                        
+                    }
                 }
                 break;
                 
@@ -392,13 +416,33 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         ;
     }
     
-    public void trataColisoes() {
+    public int trataColisoes() {
         bluesphere.trataBuracos(cenario_stones.getBuracos());
         redsphere.trataBuracos(cenario_stones.getBuracos());
+        
         bluesphere.trataParedes(cenario_stones.getParedes());
         redsphere.trataParedes(cenario_stones.getParedes());
+        
         bluesphere.trataPedras(cenario_stones.getPedras());
         redsphere.trataPedras(cenario_stones.getPedras());
+        
+        if (bluesphere.trataMarca(cenario_stones.getFim()))
+            return 1;
+        
+        else if (redsphere.trataMarca(cenario_stones.getFim()))
+            return 2;
+        
+        else
+            return 0;
+    }
+    
+    public void respaw(){
+        System.out.printf("respaw");
+        bluesphere.setXY((int) cenario_stones.inicio.getX() + 15, (int) cenario_stones.inicio.getY() + 12);
+        bluesphere.setVelXY(0,0);
+        redsphere.setXY((int) cenario_stones.inicio.getX() + 55, (int) cenario_stones.inicio.getY() + 12);
+        redsphere.setVelXY(0,0);
+        
     }
     
     /** Thread method for the game Loop */
