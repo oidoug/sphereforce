@@ -30,19 +30,20 @@ public class ConectionUdp {
     private byte[] receiveData;
 
     private InetAddress ipAddr;
+
     private int portaServidor = 3000;
     private int portaCliente;
+
     private boolean servidor;
-    
-    
-    
     
     /** Creates a new instance of Conection */
     
     //cria instancia para o servidor
     public ConectionUdp() throws Exception {
         servidor = true;
+
         udp_socket = new DatagramSocket(portaServidor);
+
     }
     
     //cria instancia para o cliente
@@ -65,6 +66,7 @@ public class ConectionUdp {
             sendPacket = 
                     new DatagramPacket
                     (sendData,sendData.length,ipAddr,portaCliente);
+
         }
         else {
             sendPacket = new DatagramPacket
