@@ -144,7 +144,9 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public void startsAsClient() {
         servidor = false;
         state = GET_SET;
-        ip = "localhost";
+
+        ip = "192.168.200.102";
+//        repaint();
 
         
         try {
@@ -153,8 +155,10 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //chatON = true;
-        chatscreen.connect(conTcp);
+
+        System.out.println("passo reto");
+        
+//        chatON = true;
         
         //inicia os obstaculos
         LinkedList<Buraco> buracos;
@@ -180,13 +184,17 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             e.printStackTrace();
         }
         
+        // apos fazer a tranferencia dos pacotes de montagem dos cenarios, conecta o chat
+        chatscreen.connect(conTcp);
+        
         state = GAME_ON;
     }
     
     public void startsAsServer() {
         servidor = true;
         state = GET_SET;
- 
+//        repaint();
+
         
         try {
             conTcp = new ConectionTcp();
@@ -195,8 +203,10 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             e.printStackTrace();
         }
         System.out.println("passou reto.");
-        //chatON = true;
-       
+
+//        chatON = true;
+        chatscreen.connect(conTcp);
+
         
         //inicia os obstaculos
         LinkedList<Buraco> buracos;
@@ -230,6 +240,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     }
     
     private void initGame() {
+        this.chatON = false;
+        
         cenario_stones = new Stones(getImage(getDocumentBase(), "cenario_stone/MarbleTexture.png"), getImage(getDocumentBase(), "cenario_stone/Buraco.png"), getImage(getDocumentBase(), "cenario_stone/Bloco.png"), getImage(getDocumentBase(), "cenario_stone/Pedra.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"), 4);
         
         // nao funciona ainda
