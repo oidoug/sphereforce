@@ -48,7 +48,7 @@ public class Stones extends Cenario {
     private void labirinto() {
 
         paredes.add(new Parede(bloco, 40, false, 0, Constantes.TAMANHO_BLOCO * 29, 1));
-        //paredes.add(new Parede(bloco, 30, true, 0, 0, 2));
+        paredes.add(new Parede(bloco, 30, true, 0, 0, 2));
         paredes.add(new Parede(bloco, 40, false, 0, 0, 3));
         paredes.add(new Parede(bloco, 30, true, Constantes.TAMANHO_BLOCO * 39, 0, 4));
 

@@ -9,47 +9,34 @@
 
 package labirinto.core;
 
+import java.io.Serializable;
 /**
  *
  * @author das
  */
-public class DataChat {
+public class DataChat implements Serializable{
     
     private String message;
+    
+    private int comando;
 
     public DataChat() {
     }
     
-    /**
-     * retorna o vetor em bytes respectivo a String mensagem da classe 
-     */
-    public byte[] getBytes() {
-        byte byteVector[] = new byte[message.length()];
-        
-        byteVector = message.getBytes();
-        
-        return byteVector;
-    }
-    
-    /**
-     * Seta a mensagem
-     */
     public void setMessage(String message) {
         this.message = message;
     }
     
-    /**
-     * Retranforma o vetor em bytes recebido em uma String mensagem
-     */
-    public void setData (byte[] byteVector) {
-        message = byteVector.toString();
+    public String getMessage() {
+        return message;
     }
     
-    /**
-     * Retorna String mensagem
-     */
-    public String getData() {
-        return message;
+    public void setComando(int valor){
+        this.comando = valor;
+    }
+    
+    public int getComando(){
+        return comando;
     }
 
 }

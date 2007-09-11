@@ -31,13 +31,13 @@ public class Chat {
     private ChatReceive receiveThread;
     
     private String input;
-    private LinkedList<String> outputs;
+    private LinkedList<DataChat> outputs;
     
     public Chat(Main applet, Image chat_image) {
         this.applet = applet;
         this.chat_image = chat_image;
         input = new String();
-        outputs = new LinkedList<String>();
+        outputs = new LinkedList<DataChat>();
     }
     
     public void paint(Graphics g) {
@@ -54,26 +54,30 @@ public class Chat {
             g.drawString(input, Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_INPUT_INIT_Y);
         }
         
-        boolean colorDif = false;
+
         for (int i = 0; i < outputs.size(); i++) {
-            if (applet.servidor) {
+            if (outputs.get(i).getComando() == Constantes.CHAT_SERVER) {
                 g.setColor(Color.BLUE);
-                colorDif = false;
-            } else {
-                g.setColor(Color.RED);
-                colorDif = true;
+            } else if (outputs.get(i).getComando() == Constantes.CHAT_CLIENT) {
+                g.setColor(Color.RED);                
             }
-            g.drawString(outputs.get(i), Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_OUTPUT_INIT_Y + Constantes.CHAT_STRING_OUTPUT_SPACELINE * i);
+            g.drawString(outputs.get(i).getMessage(), Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_OUTPUT_INIT_Y + Constantes.CHAT_STRING_OUTPUT_SPACELINE * i);
         }
     }
     
     public void keyEnterTyped() {
+        DataChat datac = new DataChat();
         if(outputs.size() > Constantes.MAX_OUTPUT_LIST_SIZE) {
             outputs.removeFirst();
         }
-        outputs.addLast(input);
+        if (applet.servidor)
+            datac.setComando(Constantes.CHAT_SERVER);
+        else
+            datac.setComando(Constantes.CHAT_CLIENT);
+        datac.setMessage(input);
+        outputs.addLast(datac);
         try {
-            conn.Send(input);
+            conn.Send(datac);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -84,16 +88,19 @@ public class Chat {
         applet.state = Main.GAME_ON;
     }
     
-    public void remoteMessage(String message) {
-        if(message.contains("&")) {
+    public void remoteMessage(DataChat datac) {
+        
+        if(datac.getComando() == Constantes.CHAT_STOP) {
             applet.chatNow(false);
             //applet.state = Main.GAME_ON;
         } else {
             applet.chatNow(true);
-            //if(!message.equals("$"))
-            outputs.addLast(message);
+            if(datac.getComando() != Constantes.CHAT_START){
+                outputs.addLast(datac);
+            }
         }
-        System.out.println("Remote message: " + message);
+        System.out.println("Remote comando: " + datac.getComando());
+        System.out.println("Remote message: " + datac.getMessage());
     }
     
     void concatInInputMessage(char keyText) {

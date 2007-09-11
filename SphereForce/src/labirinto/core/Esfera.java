@@ -332,51 +332,6 @@ public class Esfera {
         }
     }
     
-    public void trataParedes(LinkedList<Parede> paredes) {
-        for (Parede hole : paredes) {
-            
-            
-            if ((y >= hole.getY() - 2 * raio) && (y <= hole.getY() + hole.getAbsTamanhoH()) && (x >= hole.getX() - 2 * raio) && (x <= hole.getX() + hole.getAbsTamanhoW())) {
-                
-                System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
-
-                if ((hole.getY() <= y + 2 * raio) && (hole.getY() > y)) {
-                    System.out.printf("\n bateu em cima da parede: %d", hole.getId());
-                    this.velY = - this.velY;
-                    y = hole.getY() - 2 * raio;
-                    System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
-                }
-                
-                if ((hole.getAbsTamanhoH() + hole.getY() >= y) && (hole.getAbsTamanhoH() + hole.getY() < y + 2 * raio)) {
-                    System.out.printf("\n bateu em baixo da parede: %d", hole.getId());
-                    velY = -velY;
-                    y = hole.getY() + hole.getAbsTamanhoH();
-                    System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
-                }
-                
-                
-                
-                
-                if ((hole.getX() <= x + 2 * raio) && (hole.getX() > x)) {
-                    System.out.printf("\n bateu a esquerda da parede: %d", hole.getId());
-                    velX = -velX;
-                    x = hole.getX() - 2 * raio;
-                    System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
-                }
-                
-                if ((hole.getAbsTamanhoW() + hole.getX() >= x) && (hole.getAbsTamanhoW() + hole.getX() < x + 2 * raio)) {
-                    System.out.printf("\n bateu a direita da parede: %d", hole.getId());
-                    velX = -velX;
-                    x = hole.getX() + hole.getAbsTamanhoW();
-                    System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
-                }
-                
-                break;
-            }
-        } //for
-    } //trataParedes
-    
-    
     //verifica se colidiu com alguma marca
     public boolean trataMarca(Marca marca) {
         
@@ -389,4 +344,49 @@ public class Esfera {
                 return false;
   
         } //trata com a marca
-    }
+    
+    public void trataParedes(LinkedList<Parede> paredes) {
+        for (Parede wall : paredes) {
+            
+            
+            if ((y >= wall.getY() - 2 * raio) && (y <= wall.getY() + wall.getAbsTamanhoH()) && (x >= wall.getX() - 2 * raio) && (x <= wall.getX() + wall.getAbsTamanhoW())) {
+                
+                System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
+
+                if ((wall.getY() <= y + 2 * raio) && (wall.getY() > y)) {
+                    System.out.printf("\n bateu em cima da parede: %d", wall.getId());
+                    this.velY = - this.velY;
+                    y = wall.getY() - 2 * raio;
+                    System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
+                }
+                
+                if ((wall.getAbsTamanhoH() + wall.getY() >= y) && (wall.getAbsTamanhoH() + wall.getY() < y + 2 * raio)) {
+                    System.out.printf("\n bateu em baixo da parede: %d", wall.getId());
+                    velY = -velY;
+                    y = wall.getY() + wall.getAbsTamanhoH();
+                    System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
+                }
+                
+                
+                
+                
+                if ((wall.getX() <= x + 2 * raio) && (wall.getX() > x)) {
+                    System.out.printf("\n bateu a esquerda da parede: %d", wall.getId());
+                    velX = -velX;
+                    x = wall.getX() - 2 * raio;
+                    System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
+                }
+                
+                if ((wall.getAbsTamanhoW() + wall.getX() >= x) && (wall.getAbsTamanhoW() + wall.getX() < x + 2 * raio)) {
+                    System.out.printf("\n bateu a direita da parede: %d", wall.getId());
+                    velX = -velX;
+                    x = wall.getX() + wall.getAbsTamanhoW();
+                    System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
+                }
+                
+                break;
+            }
+        } //for
+    } //trataParedes
+
+}
