@@ -27,8 +27,9 @@ public class ChatReceive implements Runnable{
         
         this.tcp = tcp;
         this.chat = chat;
-        
+        System.out.println("depois do new e antes do start");
         receive.start();
+        System.out.println("passo do start, OUVINDO NA PORTA TCP");
     }
     
     public void stop() {
@@ -36,14 +37,14 @@ public class ChatReceive implements Runnable{
     }
 
     public void run() {
-        while(!receive.interrupted()) {
-
+        while(true) {
             System.out.println("esperando string do chat");
 
             try {
                 message = tcp.getString();
+                
                 System.out.println("mensagem recebida! "+ message);
-
+            
                 chat.remoteMessage(message);
                 
             } catch (Exception ex) {

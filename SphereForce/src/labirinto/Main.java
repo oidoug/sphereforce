@@ -146,29 +146,17 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     
     public void startsAsClient() {
         servidor = false;
-        state = GET_SET;
-
+        //state = GET_SET;
         ip = "192.168.200.102";
-//        repaint();
-
-        
         try {
             conTcp = new ConectionTcp(ip);
             conUdp = new ConectionUdp(ip);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("passo reto");
-        
-//        chatON = true;
-        
-        //inicia os obstaculos
         LinkedList<Buraco> buracos;
         LinkedList<Pedra> pedras;
-        
         try {
-            
             conTcp.receiveQnts();
             int nburacos = conTcp.getQntBuraco();
             int npedras = conTcp.getQntPedra();
@@ -184,41 +172,27 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             cenario_stones.gerarCenario(buracos,pedras);
         } catch(Exception e) {
             e.printStackTrace();
-        }
-        
+        }  
         // apos fazer a tranferencia dos pacotes de montagem dos cenarios, conecta o chat
+        //executa thread do chat
         chatscreen.connect(conTcp);
-        
         state = GAME_ON;
     }
     
     public void startsAsServer() {
         servidor = true;
-        state = GET_SET;
-//        repaint();
-
-        
+        //state = GET_SET;
         try {
             conTcp = new ConectionTcp();
             conUdp = new ConectionUdp();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("passou reto.");
-
-//        chatON = true;
-        chatscreen.connect(conTcp);
-
-        System.out.println(conUdp.toString());
-        //inicia os obstaculos
         LinkedList<Buraco> buracos;
         LinkedList<Pedra> pedras;
-        
-        cenario_stones.gerarCenario();
-        
+        cenario_stones.gerarCenario();   
         try {
             conTcp.Send(cenario_stones.getQntBuracos(), cenario_stones.getQntPedras());
-            
             buracos = cenario_stones.getBuracos();
             for (Buraco holes : buracos){
                 conTcp.Send(holes);
@@ -232,6 +206,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             e.printStackTrace();
         }
         
+        //executa thread do chat
+        System.out.println("antes de rodar a trhead dentro da classe main");
         chatscreen.connect(conTcp);
         state = GAME_ON;
     }
@@ -305,11 +281,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     
                     if(!chatON) {
                         
-                        redsphere.refresh(this.conUdp);
-                        
-                        System.out.println(conUdp.getPort()+"ip = :"+conUdp.getIP());
+                        redsphere.refresh(this.conUdp);                    
                         bluesphere.refresh(keyVector, redsphere);
-                        System.out.println("Chat Esta Ligado!");
                         try {
                             conUdp.Send(data);
                         } catch (Exception e) {
@@ -319,8 +292,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 } else {
                     if(!chatON) {
                         // sets all the data for the redsphere (client)
-                        data.setAll(keyVector, redsphere.getX(), redsphere.getY(), redsphere.getVelX(), redsphere.getVelY());
-                        
+                        data.setAll(keyVector, redsphere.getX(), redsphere.getY(), redsphere.getVelX(), redsphere.getVelY());        
                         redsphere.refresh(keyVector, bluesphere);
                         try {
                             conUdp.Send(data);
@@ -514,6 +486,11 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             } else if (state == GAME_ON) {
                 chatON = true;
                 state = CHAT_NOW;
+                    try {
+                        conTcp.Send("$");
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
             } else if (state == CHAT_NOW) {
                 chatscreen.keyEnterTyped();
             } else if (state == GET_SET) {
@@ -532,6 +509,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
+                    //state = GAME_ON;
                 chatON = false;
                 chatscreen.keyEscapeTyped();
             } else if (state == GAME_ON) {
