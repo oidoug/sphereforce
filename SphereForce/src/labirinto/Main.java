@@ -129,6 +129,13 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     
     /** Destroy Applet before leave the page */
     public void destroy() {
+        try {
+            conTcp.closeConection();
+            conUdp.closeConection();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.exit(1);
+        }
     }
     
     /** Init called in the very first applet`s run */
