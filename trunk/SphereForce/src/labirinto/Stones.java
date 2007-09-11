@@ -34,6 +34,8 @@ public class Stones extends Cenario {
         super.fim = new Marca(marca_fim, Constantes.WINDOW_WIDTH - 100 - 40, Constantes.WINDOW_HEIGHT - 50 - 40);
 
         labirinto();
+        geraburacos(buraco);
+        geraobstaculos(pedra);
     }
     
 
@@ -48,5 +50,29 @@ public class Stones extends Cenario {
         paredes.add(new Parede(bloco, 21, true, Constantes.TAMANHO_BLOCO * 16, Constantes.TAMANHO_BLOCO * 10, 6));
         paredes.add(new Parede(bloco, 21, true, Constantes.TAMANHO_BLOCO * 24, 0, 7));
         paredes.add(new Parede(bloco, 21, true, Constantes.TAMANHO_BLOCO * 31, Constantes.TAMANHO_BLOCO * 10, 8));
+    }
+    
+    private void geraburacos(Image buraco) {
+        LinkedList<Buraco> buracos = new LinkedList<Buraco>();
+        
+        buracos.add(new Buraco(buraco, 27, 60));
+        buracos.add(new Buraco(buraco, 269, 90));
+        buracos.add(new Buraco(buraco, 310, 340));
+        buracos.add(new Buraco(buraco, 150, 510));
+        buracos.add(new Buraco(buraco, 740, 268));
+        
+        super.setBuracos(buracos);
+    }
+    
+    private void geraobstaculos(Image arvore) {
+        LinkedList<Pedra> arvores = new LinkedList<Pedra>();
+        
+        arvores.add(new Pedra(arvore, 100, 100));
+        arvores.add(new Pedra(arvore, 200, 600));
+        arvores.add(new Pedra(arvore, 500, 100));
+        arvores.add(new Pedra(arvore, 200, 400));
+        arvores.add(new Pedra(arvore, 70, 50));
+    
+        super.setPedras(arvores);
     }
 }
