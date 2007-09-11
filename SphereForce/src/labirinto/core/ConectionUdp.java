@@ -97,13 +97,13 @@ public class ConectionUdp {
     /** Method getData()
      * returns the Object DataGame data, captured by the connection instance
      */
-    public DataGame getData() {
+    public DataGame getData() throws Exception{
         DataGame data = new DataGame();
         try {
             data = Receive();
         }
         catch (Exception e){
-            e.printStackTrace();
+            throw e;
         }
         return data;
     }

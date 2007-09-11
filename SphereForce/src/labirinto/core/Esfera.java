@@ -6,6 +6,8 @@
 
 package labirinto.core;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import labirinto.*;
 import java.awt.*;
 import java.applet.*;
@@ -13,6 +15,8 @@ import java.util.LinkedList;
 
 
 public class Esfera {
+    
+    private GameReceive greceiver;
     
     private float x;
     private float y;
@@ -29,10 +33,14 @@ public class Esfera {
     
     private Esfera inimiga;
     
+    private Main applet;
+    
     int refreshTime = 0;
     
     /** Creates a new instance of Esfera */
-    public Esfera(Image bah, int posx, int posy) {
+    public Esfera(Main applet, Image bah, int posx, int posy) {
+        this.applet = applet;
+        
         x = posx;
         y = posy;
         velX = velY = 0;
@@ -50,8 +58,7 @@ public class Esfera {
         //raio = H / 2;
         raio = Constantes.TAMANHO_RAIO_ESFERAS;
     }
-    
-    
+
     /** Refresh all the sphere contents,
      *  geting the new volocity and axis
      */
@@ -96,9 +103,7 @@ public class Esfera {
      *  from the package received times in times (defined by Constant.REFRESH_SPHERE_TIME).
      *  This should keep the things working...
      */
-    public void refresh(ConectionUdp conn) {
-        DataGame data = conn.getData();
-        
+    public void refresh(DataGame data) {        
         // time to time checks the time to take the right time to transcripts! A 13ts function!
         if (Constantes.REFRESH_SPHERE_TIME <= refreshTime) {
             
@@ -111,6 +116,14 @@ public class Esfera {
         
         refreshTime++;
         refresh(data.getKeyVector(), null);
+    }
+    
+    public void connect(ConectionUdp conn) {
+        System.out.println("dentro do connet da classe ESFERA");
+//        this.conn = conn;
+        greceiver = new GameReceive(conn, this);
+        ExecutorService threadExecutor = Executors.newFixedThreadPool(1);
+        threadExecutor.execute(greceiver);
     }
     
     
@@ -175,6 +188,9 @@ public class Esfera {
     public void colideEsferas() {
         boolean colidiu = verificaColisaoBolas();
         if (colidiu) {
+            
+            applet.playSphereSound();
+            
             float dx = inimiga.getX() - x;
             float dy = inimiga.getY() - y;
             float distancia = this.getDistancia(x, y, inimiga.getX(), inimiga.getY());
@@ -229,7 +245,7 @@ public class Esfera {
         float distancia = (float) Math.sqrt(cateto1*cateto1 + cateto2*cateto2);
         
         if (distancia < 2 * raio) {
-            
+
             double theta1 = Math.asin(cateto1 / distancia);
             double theta2 = Math.asin(cateto2 / distancia);
             distancia = 2 * raio;
@@ -287,6 +303,9 @@ public class Esfera {
         for (Buraco hole : buracos) {
             float distancia = getDistancia(x, y, hole.getX(), hole.getY());
             if (distancia < raio) {
+                
+                applet.playHoleSound();
+                
                 x = Constantes.SPHERE_INIT_POINT_X;
                 y = Constantes.SPHERE_INIT_POINT_Y;
             }
@@ -297,6 +316,9 @@ public class Esfera {
         for (Pedra hole : pedras) {
             float distancia = getDistancia(x, y, hole.getX(), hole.getY());
             if (distancia < raio + hole.getRaio()) {
+                
+                applet.playWallSound();
+                
                 velX = -velX;
                 velY = -velY;
                 desgrudaPedra(hole);
@@ -347,31 +369,34 @@ public class Esfera {
     
     public void trataParedes(LinkedList<Parede> paredes) {
         for (Parede wall : paredes) {
-            
-            
+
             if ((y >= wall.getY() - 2 * raio) && (y <= wall.getY() + wall.getAbsTamanhoH()) && (x >= wall.getX() - 2 * raio) && (x <= wall.getX() + wall.getAbsTamanhoW())) {
+                
+                applet.playWallSound();
                 
                 System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
 
+
                 if ((wall.getY() <= y + 2 * raio) && (wall.getY() > y)) {
                     System.out.printf("\n bateu em cima da parede: %d", wall.getId());
+
                     this.velY = - this.velY;
                     y = wall.getY() - 2 * raio;
                     System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
                 }
                 
+
                 if ((wall.getAbsTamanhoH() + wall.getY() >= y) && (wall.getAbsTamanhoH() + wall.getY() < y + 2 * raio)) {
                     System.out.printf("\n bateu em baixo da parede: %d", wall.getId());
+
                     velY = -velY;
                     y = wall.getY() + wall.getAbsTamanhoH();
                     System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
                 }
-                
-                
-                
-                
+
                 if ((wall.getX() <= x + 2 * raio) && (wall.getX() > x)) {
                     System.out.printf("\n bateu a esquerda da parede: %d", wall.getId());
+
                     velX = -velX;
                     x = wall.getX() - 2 * raio;
                     System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
@@ -379,6 +404,7 @@ public class Esfera {
                 
                 if ((wall.getAbsTamanhoW() + wall.getX() >= x) && (wall.getAbsTamanhoW() + wall.getX() < x + 2 * raio)) {
                     System.out.printf("\n bateu a direita da parede: %d", wall.getId());
+
                     velX = -velX;
                     x = wall.getX() + wall.getAbsTamanhoW();
                     System.out.printf("\nvelX=%f -- velY=%f",velX,velY);

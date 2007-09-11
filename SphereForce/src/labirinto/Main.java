@@ -74,9 +74,6 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     private Menu menuscreen;
     private Chat chatscreen;
     
-    private AudioClip cenario_song;
-    
-    
     public static MediaTracker loading;
     
     private ConectionTcp conTcp;
@@ -92,6 +89,14 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public static boolean chatON;
     
     private Image chat_image;
+    
+    private AudioClip sphere_collision_song;
+    private AudioClip wall_collision_song;
+    private AudioClip hole_collision_song;
+    private AudioClip start_song;
+    private AudioClip finish_song;
+    private AudioClip theme_song;
+    private AudioClip stones_song;
     
     private String ip;
     
@@ -132,6 +137,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             //wait for all images get ready to show everthing synchronously
             loading = new java.awt.MediaTracker(this);
             
+            initSounds();
+            
             initMenu();
             
             initGame();
@@ -142,18 +149,21 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         }
     }
     
-    
-    
     public void startsAsClient() {
         servidor = false;
-        //state = GET_SET;
-        ip = "192.168.200.102";
+        
+//        state = GET_SET;
+        //ip = "192.168.200.102";
+        ip = "169.254.202.181";
+        ip = "localhost";
+        
         try {
             conTcp = new ConectionTcp(ip);
             conUdp = new ConectionUdp(ip);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
         LinkedList<Buraco> buracos;
         LinkedList<Pedra> pedras;
         try {
@@ -176,18 +186,24 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         // apos fazer a tranferencia dos pacotes de montagem dos cenarios, conecta o chat
         //executa thread do chat
         chatscreen.connect(conTcp);
+        
+        // conecta e executa a thread de recebimento de pacotes GameData
+        bluesphere.connect(conUdp);
+        
         state = GAME_ON;
     }
     
     public void startsAsServer() {
         servidor = true;
         //state = GET_SET;
+        
         try {
             conTcp = new ConectionTcp();
             conUdp = new ConectionUdp();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
         LinkedList<Buraco> buracos;
         LinkedList<Pedra> pedras;
         cenario_stones.gerarCenario();
@@ -209,6 +225,10 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         //executa thread do chat
         System.out.println("antes de rodar a trhead dentro da classe main");
         chatscreen.connect(conTcp);
+        
+        // conecta e executa a thread de recebimento de pacotes udp GameData.
+        redsphere.connect(conUdp);
+        
         state = GAME_ON;
     }
     
@@ -219,16 +239,13 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     private void initGame() {
         this.chatON = false;
         
-        cenario_stones = new Stones(getImage(getDocumentBase(), "cenario_stone/MarbleTexture.png"), getImage(getDocumentBase(), "cenario_stone/Buraco.png"), getImage(getDocumentBase(), "cenario_stone/Bloco.png"), getImage(getDocumentBase(), "cenario_stone/Pedra.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"), 4);
-        
-        // nao funciona ainda
-        cenario_song = getAudioClip(getDocumentBase(), "sound/SphereGear.mid");
+        cenario_stones = new Stones( getImage(getDocumentBase(), "cenario_stone/MarbleTexture.png"), getImage(getDocumentBase(), "cenario_stone/Buraco.png"), getImage(getDocumentBase(), "cenario_stone/Bloco.png"), getImage(getDocumentBase(), "cenario_stone/Pedra.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"), 4);
         
         /* in,icializa uma esfera que guardara a ref da sua imagem */
-        bluesphere = new Esfera(getImage(getDocumentBase(), "blueSphere30p.png"), (int) cenario_stones.inicio.getX() + 15, (int) cenario_stones.inicio.getY() + 12);
+        bluesphere = new Esfera(this, getImage(getDocumentBase(), "blueSphere30p.png"), (int) cenario_stones.inicio.getX() + 15, (int) cenario_stones.inicio.getY() + 12);
         
         /* inicializa uma esfera que guardara a ref da sua imagem */
-        redsphere = new Esfera(getImage(getDocumentBase(), "redSphere30p.png"), (int) cenario_stones.inicio.getX() + 55, (int) cenario_stones.inicio.getY() + 12);
+        redsphere = new Esfera(this, getImage(getDocumentBase(), "redSphere30p.png"), (int) cenario_stones.inicio.getX() + 55, (int) cenario_stones.inicio.getY() + 12);
     }
     
     /**
@@ -244,7 +261,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         
         /** BEGIN Menu */
         String[] buttons_strings = {"Play as Server", "Play as Client", "Help"};
-        /* instantiate the button image, the background and game logo */
+        /* instantiate the button image, the theme song, the background and game logo */
         menuscreen = new Menu(this, buttons_strings);
         menuscreen.setImages(getImage(getDocumentBase(), "menu/MenuBackground.png"), getImage(getDocumentBase(), "menu/SphereForceLogo.png"), getImage(getDocumentBase(), "menu/ButtonUp.png"), getImage(getDocumentBase(), "menu/ButtonDown.png"));
         /** END Menu */
@@ -262,7 +279,6 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         // check the actual application's state and update it
         switch (state) {
             case GAME_ON:
-                
                 /* sobre a conexao:
                  *
                  * o servidor sempre ficara esperando as coordenadas
@@ -281,7 +297,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     
                     if(!chatON) {
                         
-                        redsphere.refresh(this.conUdp);
+//                        redsphere.refresh(this.conUdp);
                         bluesphere.refresh(keyVector, redsphere);
                         try {
                             conUdp.Send(data);
@@ -299,7 +315,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        bluesphere.refresh(conUdp);
+//                        bluesphere.refresh(conUdp);
                     }
                 }
                 
@@ -308,7 +324,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 } else {
                     // pinta a fase na tela, com background, buracos e paredes
                     cenario_stones.paint(g);
-  
+                    
                     // pinta o score
                     if (servidor){
                         g.setFont(new Font("Arial", Font.BOLD, 36));
@@ -322,14 +338,13 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                         g.drawString(String.valueOf(redPoint),Constantes.WINDOW_WIDTH/2-50,Constantes.TAMANHO_BLOCO*3);
                         g.setColor(Color.BLUE);
                         g.drawString(String.valueOf(bluePoint),Constantes.WINDOW_WIDTH/2+10,Constantes.TAMANHO_BLOCO*3);
+                        
                     }
                     
                     trataColisoes();
                     //pinta ambas as eferas
                     bluesphere.paint(g);
                     redsphere.paint(g);
-                    
-                    
                 }
                 break;
                 
@@ -393,9 +408,13 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         
         if (bluesphere.trataMarca(cenario_stones.getFim())){
             this.bluePoint++;
+            this.playFinishSound();
+            
             respaw(bluesphere);
         } else if (redsphere.trataMarca(cenario_stones.getFim())){
             this.redPoint++;
+            this.playFinishSound();
+            
             respaw(redsphere);
         }
     }
@@ -476,8 +495,10 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             if (state == MENU) {
                 menuscreen.keyEnterTyped();
             } else if (state == GAME_ON) {
+                
                 chatON = true;
                 state = CHAT_NOW;
+                
                 try {
                     datac.setComando(Constantes.CHAT_START);
                     conTcp.Send(datac);
@@ -497,6 +518,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             if (state == MENU) {
                 menuscreen.keyEscapeTyped();
             } else if (state == CHAT_NOW) {
+                
                 try {
                     datac.setComando(Constantes.CHAT_STOP);
                     conTcp.Send(datac);
@@ -556,6 +578,35 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     }
     
     private void quit() {
-        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    
+    public void playWallSound() {
+        this.wall_collision_song.play();
+    }
+    
+    public void playSphereSound() {
+        this.sphere_collision_song.play();
+    }
+    
+    public void playHoleSound() {
+        this.hole_collision_song.play();
+    }
+    
+    public void playStartSound() {
+        this.start_song.play();
+    }
+    
+    public void playFinishSound() {
+        this.finish_song.play();
+    }
+    
+    private void initSounds() {
+        this.sphere_collision_song = getAudioClip(getDocumentBase(), "sound/batidabola.snd");
+        this.wall_collision_song = getAudioClip(getDocumentBase(), "sound/batida.snd");
+        this.hole_collision_song = getAudioClip(getDocumentBase(), "sound/buraco.snd");
+        this.start_song = getAudioClip(getDocumentBase(), "sound/start.snd");
+        this.finish_song = getAudioClip(getDocumentBase(), "sound/final.snd");
+        this.theme_song = getAudioClip(getDocumentBase(), "sound/spheregearwithsolo.snd");
+        this.stones_song = getAudioClip(getDocumentBase(), "sound/spheregearwithsolo.snd");
     }
 }
