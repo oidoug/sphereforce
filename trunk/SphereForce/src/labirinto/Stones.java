@@ -9,6 +9,7 @@
 
 package labirinto;
 
+import java.applet.AudioClip;
 import java.awt.Image;
 import labirinto.core.Parede;
 import labirinto.core.Marca;
@@ -20,8 +21,8 @@ import labirinto.core.Buraco;
  *
  * @author Douglas Schmidt
  */
+
 public class Stones extends Cenario {
-    
 
     public Stones(Image background, Image buraco, Image bloco, Image pedra, Image marca_inicio, Image marca_fim,
             int dificuldade) {
