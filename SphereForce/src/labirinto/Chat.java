@@ -33,6 +33,8 @@ public class Chat {
     private String input;
     private LinkedList<DataChat> outputs;
     
+    private ExecutorService threadExecutor = Executors.newFixedThreadPool(1);
+    
     public Chat(Main applet, Image chat_image) {
         this.applet = applet;
         this.chat_image = chat_image;
@@ -116,8 +118,19 @@ public class Chat {
         System.out.println("dentro do connet da classe CHAT");
         this.conn = conection;
         receiveThread = new ChatReceive(conn, this);
-        ExecutorService threadExecutor = Executors.newFixedThreadPool(1);
+        
         threadExecutor.execute(receiveThread);
         
+    }
+    
+    public void stopThread(){
+        threadExecutor.shutdown();
+        receiveThread = null;
+        System.out.println("dei shutdown");
+    }
+    
+    
+    public void restartThread(){
+        receiveThread.recover();
     }
 }

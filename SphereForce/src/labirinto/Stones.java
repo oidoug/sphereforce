@@ -36,15 +36,6 @@ public class Stones extends Cenario {
         labirinto();
     }
     
-    public void gerarCenario(){
-        super.buracos();
-        super.pedras();
-    }
-    
-    public void gerarCenario( LinkedList<Buraco> buracos, LinkedList<Pedra> pedras){
-        super.setBuracos(buracos);
-        super.setPedras(pedras);
-    }
 
     private void labirinto() {
 
@@ -53,9 +44,9 @@ public class Stones extends Cenario {
         paredes.add(new Parede(bloco, 40, false, 0, 0, 3));
         paredes.add(new Parede(bloco, 30, true, Constantes.TAMANHO_BLOCO * 39, 0, 4));
 
-        paredes.add(new Parede(bloco, 20, true, Constantes.TAMANHO_BLOCO * 8, Constantes.TAMANHO_BLOCO, 5));
-        paredes.add(new Parede(bloco, 20, true, Constantes.TAMANHO_BLOCO * 16, Constantes.TAMANHO_BLOCO * 10, 6));
-        paredes.add(new Parede(bloco, 20, true, Constantes.TAMANHO_BLOCO * 24, Constantes.TAMANHO_BLOCO, 7));
-        paredes.add(new Parede(bloco, 20, true, Constantes.TAMANHO_BLOCO * 31, Constantes.TAMANHO_BLOCO * 10, 8));
+        paredes.add(new Parede(bloco, 21, true, Constantes.TAMANHO_BLOCO * 8, 0, 5));
+        paredes.add(new Parede(bloco, 21, true, Constantes.TAMANHO_BLOCO * 16, Constantes.TAMANHO_BLOCO * 10, 6));
+        paredes.add(new Parede(bloco, 21, true, Constantes.TAMANHO_BLOCO * 24, 0, 7));
+        paredes.add(new Parede(bloco, 21, true, Constantes.TAMANHO_BLOCO * 31, Constantes.TAMANHO_BLOCO * 10, 8));
     }
 }

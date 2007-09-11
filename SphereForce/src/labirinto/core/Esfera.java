@@ -35,6 +35,8 @@ public class Esfera {
     
     private Main applet;
     
+    private ExecutorService threadExecutor = Executors.newFixedThreadPool(1);
+    
     int refreshTime = 0;
     
     /** Creates a new instance of Esfera */
@@ -122,8 +124,11 @@ public class Esfera {
         System.out.println("dentro do connet da classe ESFERA");
 //        this.conn = conn;
         greceiver = new GameReceive(conn, this);
-        ExecutorService threadExecutor = Executors.newFixedThreadPool(1);
         threadExecutor.execute(greceiver);
+    }
+    
+    public void stopThread(){
+        threadExecutor.shutdown();
     }
     
     
@@ -371,18 +376,16 @@ public class Esfera {
         for (Parede wall : paredes) {
 
             if ((y >= wall.getY() - 2 * raio) && (y <= wall.getY() + wall.getAbsTamanhoH()) && (x >= wall.getX() - 2 * raio) && (x <= wall.getX() + wall.getAbsTamanhoW())) {
-                
+
                 applet.playWallSound();
                 
-                System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
 
 
                 if ((wall.getY() <= y + 2 * raio) && (wall.getY() > y)) {
                     System.out.printf("\n bateu em cima da parede: %d", wall.getId());
+                    velY = -velY;
 
-                    this.velY = - this.velY;
-                    y = wall.getY() - 2 * raio;
-                    System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
+
                 }
                 
 
@@ -391,7 +394,6 @@ public class Esfera {
 
                     velY = -velY;
                     y = wall.getY() + wall.getAbsTamanhoH();
-                    System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
                 }
 
                 if ((wall.getX() <= x + 2 * raio) && (wall.getX() > x)) {
@@ -399,7 +401,6 @@ public class Esfera {
 
                     velX = -velX;
                     x = wall.getX() - 2 * raio;
-                    System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
                 }
                 
                 if ((wall.getAbsTamanhoW() + wall.getX() >= x) && (wall.getAbsTamanhoW() + wall.getX() < x + 2 * raio)) {
@@ -407,7 +408,6 @@ public class Esfera {
 
                     velX = -velX;
                     x = wall.getX() + wall.getAbsTamanhoW();
-                    System.out.printf("\nvelX=%f -- velY=%f",velX,velY);
                 }
                 
                 break;

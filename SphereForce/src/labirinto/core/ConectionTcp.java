@@ -192,6 +192,8 @@ public class ConectionTcp {
     
     public void closeConection() throws Exception {
         try {
+            if (servidor)
+                serverSocket.close();
             output.close();
             input.close();
             socket.close();

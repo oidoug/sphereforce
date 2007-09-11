@@ -29,7 +29,7 @@ public class ChatReceive implements Runnable{
         this.tcp = tcp;
         this.chat = chat;
         System.out.println("depois do new e antes do start");
-        receive.start();
+        //receive.start();
         System.out.println("passo do start, OUVINDO NA PORTA TCP");
     }
     

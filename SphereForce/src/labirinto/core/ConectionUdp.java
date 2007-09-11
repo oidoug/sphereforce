@@ -135,4 +135,8 @@ public class ConectionUdp {
     public int getPort(){
         return this.portaCliente;
     }
+    
+    public void closeConection(){
+        udp_socket.close();
+    }
 }
