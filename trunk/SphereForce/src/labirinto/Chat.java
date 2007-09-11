@@ -16,6 +16,8 @@ import java.awt.Image;
 import java.util.LinkedList;
 import labirinto.core.ConectionTcp;
 import labirinto.core.DataChat;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 
 /**
  *
@@ -70,11 +72,11 @@ public class Chat {
             outputs.removeFirst();
         }
         outputs.addLast(input);
-        
-        /** Aqui temos q ver como o dado sera mandado */
-//        DataChat data = new DataChat();
-//        data.setMessage(input.toUpperCase());
-//        conn.Send(data);
+        try {
+            conn.Send(input);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         input = "";
     }
     
@@ -83,10 +85,12 @@ public class Chat {
     }
     
     public void remoteMessage(String message) {
-        if(message.equals("&")) {
+        if(message.contains("&")) {
             applet.chatNow(false);
+            //applet.state = Main.GAME_ON;
         } else {
             applet.chatNow(true);
+            //if(!message.equals("$"))
             outputs.addLast(message);
         }
         System.out.println("Remote message: " + message);
@@ -102,7 +106,11 @@ public class Chat {
     }
     
     void connect(ConectionTcp conection) {
+        System.out.println("dentro do connet da classe CHAT");
         this.conn = conection;
         receiveThread = new ChatReceive(conn, this);
+        ExecutorService threadExecutor = Executors.newFixedThreadPool(1);
+        threadExecutor.execute(receiveThread);
+        
     }
 }
