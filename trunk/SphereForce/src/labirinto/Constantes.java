@@ -64,6 +64,7 @@ public class Constantes {
     public static final int CHAT_STOP = 1;
     public static final int CHAT_CLIENT = 2;
     public static final int CHAT_SERVER = 3;
+    public static final int CHAT_END_GAME = 4;
     
     public static final int NOBODY_WIN = 0;
     public static final int SERVER_WIN = 1;
