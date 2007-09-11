@@ -104,6 +104,9 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     private int bluePoint = 0;
     private int redPoint = 0;
     
+    private boolean song_theme_on = false;
+    private boolean song_spheregear_on = false;
+    
     private int whoWin = Constantes.NOBODY_WIN;
     private int mapOn;
     private long stopTime;
@@ -157,13 +160,18 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     }
     
     public void startsAsClient() {
+        playStartSound();
         servidor = false;
         
-//        state = GET_SET;
-        //ip = "192.168.200.102";
-        ip = "169.254.202.181";
-        ip = "localhost";
+        state = GET_SET;
         
+        //ip = "192.168.200.102";
+//        ip = "169.254.202.181";
+//        ip = "localhost";
+//        state = GAME_ON;
+    }
+    
+    public void startAsClientConn(String ip) {
         try {
             conTcp = new ConectionTcp(ip);
             conUdp = new ConectionUdp(ip);
@@ -173,6 +181,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         
         cenario_stones = new Stones( getImage(getDocumentBase(), "cenario_stone/MarbleTexture.png"), getImage(getDocumentBase(), "cenario_stone/Buraco.png"), getImage(getDocumentBase(), "cenario_stone/Bloco.png"), getImage(getDocumentBase(), "cenario_stone/Pedra.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"),4);
         initCenario(cenario_stones);
+
     }
     
     public void startsAsServer() {
@@ -279,7 +288,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         String[] buttons_strings = {"Play as Server", "Play as Client", "Help"};
         /* instantiate the button image, the theme song, the background and game logo */
         menuscreen = new Menu(this, buttons_strings);
-        menuscreen.setImages(getImage(getDocumentBase(), "menu/MenuBackground.png"), getImage(getDocumentBase(), "menu/SphereForceLogo.png"), getImage(getDocumentBase(), "menu/ButtonUp.png"), getImage(getDocumentBase(), "menu/ButtonDown.png"));
+        menuscreen.setImages(getImage(getDocumentBase(), "menu/MenuBackground.png"), getImage(getDocumentBase(), "menu/SphereForceLogo.png"), getImage(getDocumentBase(), "menu/ButtonUp.png"), getImage(getDocumentBase(), "menu/ButtonDown.png"), getImage(getDocumentBase(), "menu/help.png"));
         /** END Menu */
         
         /** BEGIN Chat */
@@ -295,6 +304,11 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         // check the actual application's state and update it
         switch (state) {
             case GAME_ON:
+                if(!song_spheregear_on) {
+                    stopTitleSong();
+                    playCenarioSong();
+                    this.song_spheregear_on = true;
+                }
                 /* sobre a conexao:
                  *
                  * o servidor sempre ficara esperando as coordenadas
@@ -376,6 +390,10 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 break;
                 
             case LOGO:
+                if(!song_theme_on) {
+                    playTitleSong();
+                    song_theme_on = true;
+                }
                 logoscreen.paint(g);
                 
                 break;
@@ -392,10 +410,14 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 break;
                 
             case GET_SET:
+                if(ip == null) ip = new String();
+                
                 g.setColor(Color.GREEN);
                 g.setFont(new Font("Arial", Font.BOLD, 18));
+                
+                g.drawImage(chat_image, 0, 0, this);
+                
                 if(servidor) {
-                    g.drawImage(chat_image, 0, 0, this);
                     g.drawString("Wainting for the client to connect...", Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_OUTPUT_INIT_Y + 50);
                 } else {
                     g.drawString("Enter a valid IP to connect:", Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_OUTPUT_INIT_Y + 50);
@@ -545,12 +567,15 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     
                 } else if (state == GET_SET) {
                     this.ip = ip.concat(String.valueOf(keyEvent.getKeyChar()));
+                    repaint();
                 }
             } else {
                 if (state == CHAT_NOW) {
                     chatscreen.unConcatInInputMessage();
                 } else {
+                    System.out.println("BACKSPACE PRESSED!");
                     ip = ip.substring(0, ip.length()-1);
+                    repaint();
                 }
             }
         }
@@ -596,6 +621,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 chatscreen.keyEnterTyped();
             } else if (state == GET_SET) {
                 if(!servidor) {
+                    startAsClientConn(ip);
                     state = GAME_ON;
                 }
             }
@@ -665,6 +691,14 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     }
     
     private void quit() {
+        DataChat datac = new DataChat();
+        datac.setComando(Constantes.CHAT_END_GAME);
+        try {
+            conTcp.Send(datac);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        System.exit(0);
     }
     
     public void playWallSound() {
@@ -687,13 +721,25 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         this.finish_song.play();
     }
     
+    private void playCenarioSong() {
+        this.stones_song.play();
+    }
+    
+    private void playTitleSong() {
+        this.theme_song.play();
+    }
+    
     private void initSounds() {
         this.sphere_collision_song = getAudioClip(getDocumentBase(), "sound/batidabola.snd");
         this.wall_collision_song = getAudioClip(getDocumentBase(), "sound/batida.snd");
         this.hole_collision_song = getAudioClip(getDocumentBase(), "sound/buraco.snd");
         this.start_song = getAudioClip(getDocumentBase(), "sound/start.snd");
         this.finish_song = getAudioClip(getDocumentBase(), "sound/final.snd");
-        this.theme_song = getAudioClip(getDocumentBase(), "sound/spheregearwithsolo.snd");
-        this.stones_song = getAudioClip(getDocumentBase(), "sound/spheregearwithsolo.snd");
+        this.theme_song = getAudioClip(getDocumentBase(), "sound/titlesong.au");
+        this.stones_song = getAudioClip(getDocumentBase(), "sound/quietspheregearwithsolo.au");
+    }
+    
+    private void stopTitleSong() {
+        this.theme_song.stop();
     }
 }

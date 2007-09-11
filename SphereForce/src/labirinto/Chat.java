@@ -56,12 +56,12 @@ public class Chat {
             g.drawString(input, Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_INPUT_INIT_Y);
         }
         
-
+        
         for (int i = 0; i < outputs.size(); i++) {
             if (outputs.get(i).getComando() == Constantes.CHAT_SERVER) {
                 g.setColor(Color.BLUE);
             } else if (outputs.get(i).getComando() == Constantes.CHAT_CLIENT) {
-                g.setColor(Color.RED);                
+                g.setColor(Color.RED);
             }
             g.drawString(outputs.get(i).getMessage(), Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_OUTPUT_INIT_Y + Constantes.CHAT_STRING_OUTPUT_SPACELINE * i);
         }
@@ -91,18 +91,22 @@ public class Chat {
     }
     
     public void remoteMessage(DataChat datac) {
-        
-        if(datac.getComando() == Constantes.CHAT_STOP) {
-            applet.chatNow(false);
-            //applet.state = Main.GAME_ON;
-        } else {
-            applet.chatNow(true);
-            if(datac.getComando() != Constantes.CHAT_START){
-                outputs.addLast(datac);
+        if (datac.getComando() != Constantes.CHAT_END_GAME) {
+            
+            if(datac.getComando() == Constantes.CHAT_STOP) {
+                applet.chatNow(false);
+                //applet.state = Main.GAME_ON;
+            } else {
+                applet.chatNow(true);
+                if(datac.getComando() != Constantes.CHAT_START){
+                    outputs.addLast(datac);
+                }
             }
+            System.out.println("Remote comando: " + datac.getComando());
+            System.out.println("Remote message: " + datac.getMessage());
+        } else {
+            applet.state = Main.MENU;
         }
-        System.out.println("Remote comando: " + datac.getComando());
-        System.out.println("Remote message: " + datac.getMessage());
     }
     
     void concatInInputMessage(char keyText) {
