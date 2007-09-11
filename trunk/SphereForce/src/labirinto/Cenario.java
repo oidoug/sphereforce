@@ -196,4 +196,20 @@ public class Cenario {
     protected Marca getFim(){
         return fim;
     }
+    
+    protected void gerarCenario(){
+        this.buracos();
+        this.pedras();
+    }
+    
+    protected void gerarCenario( LinkedList<Buraco> buracos, LinkedList<Pedra> pedras){
+        this.setBuracos(buracos);
+        this.setPedras(pedras);
+    }
+    
+    protected void zerarCenario(){
+        this.buracos.clear();
+        this.pedras.clear();
+        this.paredes.clear();
+    }
 }

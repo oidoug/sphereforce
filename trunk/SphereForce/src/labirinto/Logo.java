@@ -19,7 +19,7 @@ import java.util.LinkedList;
  */
 class Logo {
 
-    private final long OUT_TIME = 3000;
+    
 
     private long stopTime;
     private long startTime;
@@ -55,7 +55,7 @@ class Logo {
         if (!applet.keyWasPressed()) {
 
             if (novoLogo) {
-                stopTime = OUT_TIME;
+                stopTime = Constantes.LOGO_OUT_TIME;
                 startTime = System.currentTimeMillis();
             }
             if (stopTime >= System.currentTimeMillis() - startTime && logos.isEmpty() == false) {

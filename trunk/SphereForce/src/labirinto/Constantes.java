@@ -65,6 +65,19 @@ public class Constantes {
     public static final int CHAT_CLIENT = 2;
     public static final int CHAT_SERVER = 3;
     
+    public static final int NOBODY_WIN = 0;
+    public static final int SERVER_WIN = 1;
+    public static final int CLIENT_WIN = 2;
+    
+    public static final int CENARIO_STONES = 0;
+    public static final int CENARIO_GRASS = 1;
+    
+    public static final long LOGO_OUT_TIME = 3000;
+    
+    public static final int POINTS_TO_WIN = 1;
+    
+    
+    
     public Constantes() {
     }
     

@@ -51,6 +51,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public static final int WAITING_CLIENT = 5;
     public static final int GET_SET = 6;
     public static final int CHAT_NOW = 7;
+    public static final int SMB_WON = 8;
     
     public int state;
     
@@ -102,6 +103,12 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     
     private int bluePoint = 0;
     private int redPoint = 0;
+    
+    private int whoWin = Constantes.NOBODY_WIN;
+    private int mapOn;
+    private long stopTime;
+    private long startTime;
+    private boolean entrar;
     
     /** Starts Applet with page`s requiriment */
     @Override
@@ -164,33 +171,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             e.printStackTrace();
         }
         
-        LinkedList<Buraco> buracos;
-        LinkedList<Pedra> pedras;
-        try {
-            conTcp.receiveQnts();
-            int nburacos = conTcp.getQntBuraco();
-            int npedras = conTcp.getQntPedra();
-            
-            buracos = new LinkedList<Buraco>();
-            for (int i=0; i < nburacos; i++)
-                buracos.add( conTcp.getHole(getImage(getDocumentBase(), "cenario_stone/Buraco.png") ) ); //pega os buracos
-            
-            pedras = new LinkedList<Pedra>();
-            for (int i=0; i < npedras; i++)
-                pedras.add( conTcp.getStone( getImage(getDocumentBase(), "cenario_stone/Pedra.png") ) );
-            
-            cenario_stones.gerarCenario(buracos,pedras);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        // apos fazer a tranferencia dos pacotes de montagem dos cenarios, conecta o chat
-        //executa thread do chat
-        chatscreen.connect(conTcp);
-        
-        // conecta e executa a thread de recebimento de pacotes GameData
-        bluesphere.connect(conUdp);
-        
-        state = GAME_ON;
+        cenario_stones = new Stones( getImage(getDocumentBase(), "cenario_stone/MarbleTexture.png"), getImage(getDocumentBase(), "cenario_stone/Buraco.png"), getImage(getDocumentBase(), "cenario_stone/Bloco.png"), getImage(getDocumentBase(), "cenario_stone/Pedra.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"),4);
+        initCenario(cenario_stones);
     }
     
     public void startsAsServer() {
@@ -203,35 +185,74 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+        cenario_stones = new Stones( getImage(getDocumentBase(), "cenario_stone/MarbleTexture.png"), getImage(getDocumentBase(), "cenario_stone/Buraco.png"), getImage(getDocumentBase(), "cenario_stone/Bloco.png"), getImage(getDocumentBase(), "cenario_stone/Pedra.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"),4);
+        initCenario(cenario_stones);
+    }
+    
+    public void initCenario(Cenario cenario){
+        mapOn = Constantes.CENARIO_STONES;
         LinkedList<Buraco> buracos;
         LinkedList<Pedra> pedras;
-        cenario_stones.gerarCenario();
-        try {
-            conTcp.Send(cenario_stones.getQntBuracos(), cenario_stones.getQntPedras());
-            buracos = cenario_stones.getBuracos();
-            for (Buraco holes : buracos){
-                conTcp.Send(holes);
+        bluesphere = new Esfera(this, getImage(getDocumentBase(), "blueSphere30p.png"), (int) cenario.inicio.getX() + 15, (int) cenario.inicio.getY() + 12);
+        
+        /* inicializa uma esfera que guardara a ref da sua imagem */
+        redsphere = new Esfera(this, getImage(getDocumentBase(), "redSphere30p.png"), (int) cenario.inicio.getX() + 55, (int) cenario.inicio.getY() + 12);
+        
+        
+        if (servidor){
+            cenario.gerarCenario();
+            try {
+                conTcp.Send(cenario.getQntBuracos(), cenario.getQntPedras());
+                buracos = cenario.getBuracos();
+                for (Buraco holes : buracos){
+                    conTcp.Send(holes);
+                }
+                
+                pedras = cenario.getPedras();
+                for (Pedra stones : pedras){
+                    conTcp.Send(stones);
+                }
+            } catch (Exception e){
+                e.printStackTrace();
             }
             
-            pedras = cenario_stones.getPedras();
-            for (Pedra stones : pedras){
-                conTcp.Send(stones);
+            //executa thread do chat
+            System.out.println("antes de rodar a trhead dentro da classe main");
+            chatscreen.connect(conTcp);
+            
+            // conecta e executa a thread de recebimento de pacotes udp GameData.
+            redsphere.connect(conUdp);
+        } else {
+            
+            
+            //cliente
+            try {
+                conTcp.receiveQnts();
+                int nburacos = conTcp.getQntBuraco();
+                int npedras = conTcp.getQntPedra();
+                
+                buracos = new LinkedList<Buraco>();
+                for (int i=0; i < nburacos; i++)
+                    buracos.add( conTcp.getHole(getImage(getDocumentBase(), "cenario_stone/Buraco.png") ) ); //pega os buracos
+                
+                pedras = new LinkedList<Pedra>();
+                for (int i=0; i < npedras; i++)
+                    pedras.add( conTcp.getStone( getImage(getDocumentBase(), "cenario_stone/Pedra.png") ) );
+                
+                cenario.gerarCenario(buracos,pedras);
+            } catch(Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e){
-            e.printStackTrace();
+            // apos fazer a tranferencia dos pacotes de montagem dos cenarios, conecta o chat
+            //executa thread do chat
+            chatscreen.connect(conTcp);
+            
+            // conecta e executa a thread de recebimento de pacotes GameData
+            bluesphere.connect(conUdp);
         }
-        
-        //executa thread do chat
-        System.out.println("antes de rodar a trhead dentro da classe main");
-        chatscreen.connect(conTcp);
-        
-        // conecta e executa a thread de recebimento de pacotes udp GameData.
-        redsphere.connect(conUdp);
         
         state = GAME_ON;
     }
-    
     public void chatNow(boolean chat) {
         chatON = chat;
     }
@@ -239,13 +260,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     private void initGame() {
         this.chatON = false;
         
-        cenario_stones = new Stones( getImage(getDocumentBase(), "cenario_stone/MarbleTexture.png"), getImage(getDocumentBase(), "cenario_stone/Buraco.png"), getImage(getDocumentBase(), "cenario_stone/Bloco.png"), getImage(getDocumentBase(), "cenario_stone/Pedra.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"), 4);
-        
         /* in,icializa uma esfera que guardara a ref da sua imagem */
-        bluesphere = new Esfera(this, getImage(getDocumentBase(), "blueSphere30p.png"), (int) cenario_stones.inicio.getX() + 15, (int) cenario_stones.inicio.getY() + 12);
         
-        /* inicializa uma esfera que guardara a ref da sua imagem */
-        redsphere = new Esfera(this, getImage(getDocumentBase(), "redSphere30p.png"), (int) cenario_stones.inicio.getX() + 55, (int) cenario_stones.inicio.getY() + 12);
     }
     
     /**
@@ -323,6 +339,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     state = CHAT_NOW;
                 } else {
                     // pinta a fase na tela, com background, buracos e paredes
+                    
                     cenario_stones.paint(g);
                     
                     // pinta o score
@@ -342,6 +359,16 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     }
                     
                     trataColisoes();
+                    if (bluePoint == Constantes.POINTS_TO_WIN){
+                        whoWin = Constantes.SERVER_WIN;
+                        state = SMB_WON;
+                        entrar = true;
+                    }
+                    if (redPoint == Constantes.POINTS_TO_WIN){
+                        whoWin = Constantes.CLIENT_WIN;
+                        state = SMB_WON;
+                        entrar = true;
+                    }
                     //pinta ambas as eferas
                     bluesphere.paint(g);
                     redsphere.paint(g);
@@ -378,6 +405,65 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                         g.drawString(ip, Constantes.CHAT_STRING_INIT_X, Constantes.CHAT_STRING_INPUT_INIT_Y);
                     }
                 }
+                
+                break;
+                
+            case SMB_WON:
+                
+                if (!this.keyWasPressed()){
+                    
+                    this.cenario_stones.paint(g);
+                    this.redsphere.paint(g);
+                    this.bluesphere.paint(g);
+                    if (whoWin == Constantes.SERVER_WIN){
+                        g.setFont(new Font("Arial", Font.BOLD, 50));
+                        g.setColor(Color.BLUE);
+                        g.drawString("BLUE SPHERE WIN's",100, Constantes.WINDOW_HEIGHT/2 - 25);
+                    } else {
+                        g.setFont(new Font("Arial", Font.BOLD, 50));
+                        g.setColor(Color.RED);
+                        g.drawString("RED SPHERE WIN's",100, Constantes.WINDOW_HEIGHT/2 - 25);
+                    }
+                }
+                
+                else {
+                    System.out.println("to no else");
+                    bluePoint  = 0;
+                    redPoint = 0;
+                    whoWin = Constantes.NOBODY_WIN;
+                    chatscreen.stopThread();
+                    try {
+                        conTcp.closeConection();
+                        conUdp.closeConection();
+                        if (servidor){
+                            
+                            redsphere.stopThread();
+                            conTcp = new ConectionTcp();
+                            conUdp = new ConectionUdp();
+                        } else {
+                            
+                            bluesphere.stopThread();
+                            conTcp = new ConectionTcp(ip);
+                            conUdp = new ConectionUdp(ip);
+                        }
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    if (mapOn == Constantes.CENARIO_STONES) {
+                        
+                        //initCenario(cenario_grass);
+                        
+                        cenario_stones.zerarCenario();
+                        cenario_stones = new Stones( getImage(getDocumentBase(), "cenario_stone/MarbleTexture.png"), getImage(getDocumentBase(), "cenario_stone/Buraco.png"), getImage(getDocumentBase(), "cenario_stone/Bloco.png"), getImage(getDocumentBase(), "cenario_stone/Pedra.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"),4);
+                        initCenario(cenario_stones);
+                    } else {
+                        //cenario_grass.zerarCenario();
+                        initCenario(cenario_stones);
+                        
+                    }
+                }
+                
+                
                 
                 break;
                 
@@ -421,11 +507,12 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     
     public void respaw(Esfera sphere){
         
-        sphere.setXY((int) cenario_stones.inicio.getX() + 15, (int) cenario_stones.inicio.getY() + 12);
+        sphere.setXY((int) cenario_stones.inicio.getX() + 20, (int) cenario_stones.inicio.getY() + 15);
         sphere.setVelXY(0,0);
         
-        
     }
+    
+    
     
     /** Thread method for the game Loop */
     
