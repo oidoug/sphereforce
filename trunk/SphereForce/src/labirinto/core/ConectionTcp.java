@@ -82,14 +82,9 @@ public class ConectionTcp {
     
   
     // sender para mensagens String
-    public void Send(String message) throws Exception {
+    public void Send(DataChat data) throws Exception {
         try {
-            if (servidor){
-                output.writeObject("Server: " + message);
-            }
-            else {
-                output.writeObject("Client: " + message);
-            }
+            output.writeObject(data);
             output.flush();
         }
         catch (Exception e){
@@ -99,15 +94,15 @@ public class ConectionTcp {
     
 
     // receiver para mensagens String
-    public String getString() throws Exception {
-        String message = new String();
+    public DataChat getData() throws Exception {
+        DataChat data = new DataChat();
         try {
-            message = (String) input.readObject();
+            data = (DataChat) input.readObject();
         }
         catch (Exception e){
             e.printStackTrace();
         }
-        return message;
+        return data;
     }
     
     //manda a quantiadde de buracos e pedras pro cliente

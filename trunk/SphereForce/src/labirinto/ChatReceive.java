@@ -10,6 +10,7 @@
 package labirinto;
 
 import labirinto.core.ConectionTcp;
+import labirinto.core.DataChat;
 
 /**
  *
@@ -20,7 +21,7 @@ public class ChatReceive implements Runnable{
     private Thread receive;
     private ConectionTcp tcp;
     private Chat chat;
-    private String message;
+    private DataChat datac;
     
     public ChatReceive(ConectionTcp tcp, Chat chat) {
         receive = new Thread();
@@ -41,11 +42,8 @@ public class ChatReceive implements Runnable{
             System.out.println("esperando string do chat");
 
             try {
-                message = tcp.getString();
-                
-                System.out.println("mensagem recebida! "+ message);
-            
-                chat.remoteMessage(message);
+                datac = tcp.getData();
+                chat.remoteMessage(datac);
                 
             } catch (Exception ex) {
                 ex.printStackTrace();

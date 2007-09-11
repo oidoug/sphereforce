@@ -60,6 +60,11 @@ public class Constantes {
     
     public static final int CHAT_STRING_OUTPUT_SPACELINE = 15;
     
+    public static final int CHAT_START = 0;
+    public static final int CHAT_STOP = 1;
+    public static final int CHAT_CLIENT = 2;
+    public static final int CHAT_SERVER = 3;
+    
     public Constantes() {
     }
     

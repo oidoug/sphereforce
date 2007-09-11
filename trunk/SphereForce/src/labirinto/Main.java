@@ -172,7 +172,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             cenario_stones.gerarCenario(buracos,pedras);
         } catch(Exception e) {
             e.printStackTrace();
-        }  
+        }
         // apos fazer a tranferencia dos pacotes de montagem dos cenarios, conecta o chat
         //executa thread do chat
         chatscreen.connect(conTcp);
@@ -190,7 +190,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         }
         LinkedList<Buraco> buracos;
         LinkedList<Pedra> pedras;
-        cenario_stones.gerarCenario();   
+        cenario_stones.gerarCenario();
         try {
             conTcp.Send(cenario_stones.getQntBuracos(), cenario_stones.getQntPedras());
             buracos = cenario_stones.getBuracos();
@@ -281,7 +281,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     
                     if(!chatON) {
                         
-                        redsphere.refresh(this.conUdp);                    
+                        redsphere.refresh(this.conUdp);
                         bluesphere.refresh(keyVector, redsphere);
                         try {
                             conUdp.Send(data);
@@ -292,7 +292,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 } else {
                     if(!chatON) {
                         // sets all the data for the redsphere (client)
-                        data.setAll(keyVector, redsphere.getX(), redsphere.getY(), redsphere.getVelX(), redsphere.getVelY());        
+                        data.setAll(keyVector, redsphere.getX(), redsphere.getY(), redsphere.getVelX(), redsphere.getVelY());
                         redsphere.refresh(keyVector, bluesphere);
                         try {
                             conUdp.Send(data);
@@ -308,35 +308,28 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 } else {
                     // pinta a fase na tela, com background, buracos e paredes
                     cenario_stones.paint(g);
+  
+                    // pinta o score
+                    if (servidor){
+                        g.setFont(new Font("Arial", Font.BOLD, 36));
+                        g.setColor(Color.BLUE);
+                        g.drawString(String.valueOf(bluePoint),Constantes.WINDOW_WIDTH/2-50,Constantes.TAMANHO_BLOCO*3);
+                        g.setColor(Color.RED);
+                        g.drawString(String.valueOf(redPoint),Constantes.WINDOW_WIDTH/2+10,Constantes.TAMANHO_BLOCO*3);
+                    } else {
+                        g.setFont(new Font("Arial", Font.BOLD, 36));
+                        g.setColor(Color.RED);
+                        g.drawString(String.valueOf(redPoint),Constantes.WINDOW_WIDTH/2-50,Constantes.TAMANHO_BLOCO*3);
+                        g.setColor(Color.BLUE);
+                        g.drawString(String.valueOf(bluePoint),Constantes.WINDOW_WIDTH/2+10,Constantes.TAMANHO_BLOCO*3);
+                    }
                     
-                    if (trataColisoes() == 1){
-                        this.bluePoint++;
-                        respaw();
-                    }
-                    else if (trataColisoes() == 2){
-                        this.redPoint++;
-                        respaw();
-                    }
-                    else {
-                        // pinta ambas as esferas
-                        if (servidor){
-                            g.setFont(new Font("Arial", Font.BOLD, 36));
-                            g.setColor(Color.BLUE);
-                            g.drawString(String.valueOf(bluePoint),Constantes.WINDOW_WIDTH/2-50,Constantes.TAMANHO_BLOCO*3);
-                            g.setColor(Color.RED);
-                            g.drawString(String.valueOf(redPoint),Constantes.WINDOW_WIDTH/2+10,Constantes.TAMANHO_BLOCO*3);
-                        }
-                        else {
-                            g.setFont(new Font("Arial", Font.BOLD, 36));
-                            g.setColor(Color.RED);
-                            g.drawString(String.valueOf(redPoint),Constantes.WINDOW_WIDTH/2-50,Constantes.TAMANHO_BLOCO*3);
-                            g.setColor(Color.BLUE);
-                            g.drawString(String.valueOf(bluePoint),Constantes.WINDOW_WIDTH/2+10,Constantes.TAMANHO_BLOCO*3);                            
-                        }
-                        bluesphere.paint(g);
-                        redsphere.paint(g);
-                        
-                    }
+                    trataColisoes();
+                    //pinta ambas as eferas
+                    bluesphere.paint(g);
+                    redsphere.paint(g);
+                    
+                    
                 }
                 break;
                 
@@ -388,7 +381,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         ;
     }
     
-    public int trataColisoes() {
+    public void trataColisoes() {
         bluesphere.trataBuracos(cenario_stones.getBuracos());
         redsphere.trataBuracos(cenario_stones.getBuracos());
         
@@ -398,22 +391,20 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         bluesphere.trataPedras(cenario_stones.getPedras());
         redsphere.trataPedras(cenario_stones.getPedras());
         
-        if (bluesphere.trataMarca(cenario_stones.getFim()))
-            return 1;
-        
-        else if (redsphere.trataMarca(cenario_stones.getFim()))
-            return 2;
-        
-        else
-            return 0;
+        if (bluesphere.trataMarca(cenario_stones.getFim())){
+            this.bluePoint++;
+            respaw(bluesphere);
+        } else if (redsphere.trataMarca(cenario_stones.getFim())){
+            this.redPoint++;
+            respaw(redsphere);
+        }
     }
     
-    public void respaw(){
-        System.out.printf("respaw");
-        bluesphere.setXY((int) cenario_stones.inicio.getX() + 15, (int) cenario_stones.inicio.getY() + 12);
-        bluesphere.setVelXY(0,0);
-        redsphere.setXY((int) cenario_stones.inicio.getX() + 55, (int) cenario_stones.inicio.getY() + 12);
-        redsphere.setVelXY(0,0);
+    public void respaw(Esfera sphere){
+        
+        sphere.setXY((int) cenario_stones.inicio.getX() + 15, (int) cenario_stones.inicio.getY() + 12);
+        sphere.setVelXY(0,0);
+        
         
     }
     
@@ -461,6 +452,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     
     /** KeyPressed listener, set a vector with moving events */
     public void keyPressed(KeyEvent keyEvent) {
+        DataChat datac = new DataChat();
         if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
             keyVector[UP] = true;
             if (state == MENU) {
@@ -486,11 +478,12 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             } else if (state == GAME_ON) {
                 chatON = true;
                 state = CHAT_NOW;
-                    try {
-                        conTcp.Send("$");
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+                try {
+                    datac.setComando(Constantes.CHAT_START);
+                    conTcp.Send(datac);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             } else if (state == CHAT_NOW) {
                 chatscreen.keyEnterTyped();
             } else if (state == GET_SET) {
@@ -504,12 +497,13 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             if (state == MENU) {
                 menuscreen.keyEscapeTyped();
             } else if (state == CHAT_NOW) {
-                    try {
-                        conTcp.Send("&");
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    //state = GAME_ON;
+                try {
+                    datac.setComando(Constantes.CHAT_STOP);
+                    conTcp.Send(datac);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                //state = GAME_ON;
                 chatON = false;
                 chatscreen.keyEscapeTyped();
             } else if (state == GAME_ON) {
