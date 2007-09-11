@@ -83,7 +83,6 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public boolean servidor;
     
     private Stones cenario_stones;
-    private Grass cenario_grass;
     
     /* getset counter */
     private int getsetcount = 0;
@@ -181,8 +180,6 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         }
         
         cenario_stones = new Stones( getImage(getDocumentBase(), "cenario_stone/MarbleTexture.png"), getImage(getDocumentBase(), "cenario_stone/Buraco.png"), getImage(getDocumentBase(), "cenario_stone/Bloco.png"), getImage(getDocumentBase(), "cenario_stone/Pedra.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"),4);
-        cenario_grass = new Grass( getImage(getDocumentBase(), "cenario_grass/GrassTexture.png"), getImage(getDocumentBase(), "cenario_grass/Buraco.png"), getImage(getDocumentBase(), "cenario_grass/Bloco.png"), getImage(getDocumentBase(), "cenario_grass/Tree.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"),6 );
-        
         initCenario(cenario_stones);
         
     }
@@ -356,11 +353,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     state = CHAT_NOW;
                 } else {
                     // pinta a fase na tela, com background, buracos e paredes
-                    if(mapOn == Constantes.CENARIO_STONES) {
-                        cenario_stones.paint(g);
-                    } else if (mapOn == Constantes.CENARIO_GRASS) {
-                        cenario_grass.paint(g);
-                    }
+                    
+                    cenario_stones.paint(g);
                     
                     // pinta o score
                     if (servidor){
@@ -377,11 +371,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                         g.drawString(String.valueOf(bluePoint),Constantes.WINDOW_WIDTH/2+10,Constantes.TAMANHO_BLOCO*3);
                         
                     }
-                    if (mapOn == Constantes.CENARIO_STONES){
-                        trataColisoes(cenario_stones);
-                    } else if(mapOn == Constantes.CENARIO_GRASS) {
-                        trataColisoes(cenario_grass);
-                    }
+                    
+                    trataColisoes();
                     if (bluePoint == Constantes.POINTS_TO_WIN){
                         whoWin = Constantes.SERVER_WIN;
                         state = SMB_WON;
@@ -456,25 +447,70 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
 //                        g.drawString("RED SPHERE WIN's",100, Constantes.WINDOW_HEIGHT/2 - 25);
 //                    }
 //                }
-                
+//
 //                else {
-                System.out.println("to no else");
-                bluePoint  = 0;
-                redPoint = 0;
-                whoWin = Constantes.NOBODY_WIN;
-                mapOn = Constantes.CENARIO_GRASS;
+//                    System.out.println("to no else");
+//                    bluePoint  = 0;
+//                    redPoint = 0;
+//                    whoWin = Constantes.NOBODY_WIN;
+//                    chatscreen.stopThread();
+//                    try {
+//                        conTcp.closeConection();
+//                        conUdp.closeConection();
+//                        if (servidor){
+//
+//                            redsphere.stopThread();
+//                            conTcp = new ConectionTcp();
+//                            conUdp = new ConectionUdp();
+//                        } else {
+//
+//                            bluesphere.stopThread();
+//                            conTcp = new ConectionTcp(ip);
+//                            conUdp = new ConectionUdp(ip);
+//                        }
+//                    } catch (Exception e){
+//                        e.printStackTrace();
+//                    }
+//                    if (mapOn == Constantes.CENARIO_STONES) {
+//
+//                        //initCenario(cenario_grass);
+//
+//                        cenario_stones.zerarCenario();
+//                        cenario_stones = new Stones( getImage(getDocumentBase(), "cenario_stone/MarbleTexture.png"), getImage(getDocumentBase(), "cenario_stone/Buraco.png"), getImage(getDocumentBase(), "cenario_stone/Bloco.png"), getImage(getDocumentBase(), "cenario_stone/Pedra.png"), getImage(getDocumentBase(), "Inicio.png"), getImage(getDocumentBase(), "Fim.png"),4);
+//                        initCenario(cenario_stones);
+//                    } else {
+//                        //cenario_grass.zerarCenario();
+//                        initCenario(cenario_stones);
+//
+//                    }
 //                }
                 
+                this.cenario_stones.paint(g);
+                
+                this.redsphere.paint(g);
+                this.bluesphere.paint(g);
+                g.setFont(new Font("Arial", Font.BOLD, 40));
+                if(whoWin == Constantes.SERVER_WIN) {
+                    g.setColor(Color.BLUE);
+                    g.drawString("Blue Sphere Wins!", 300, 200);
+                } else {
+                    g.setColor(Color.RED);
+                    g.drawString("Red Sphere Wins!", 300, 200);
+                }
+                
+                if(keyWasPressed()) {
+                    state = GAME_ON;
+                    whoWin = Constantes.NOBODY_WIN;
+                    bluePoint = 0;
+                    redPoint = 0;
+                    respaw(redsphere, bluesphere);
+                }
                 
                 
                 break;
                 
             case CHAT_NOW:
-                if(mapOn == Constantes.CENARIO_STONES) {
-                    cenario_stones.paint(g);
-                } else if (mapOn == Constantes.CENARIO_GRASS) {
-                    cenario_grass.paint(g);
-                }
+                this.cenario_stones.paint(g);
                 this.redsphere.paint(g);
                 this.bluesphere.paint(g);
                 chatscreen.paint(g);
@@ -488,32 +524,32 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         ;
     }
     
-    public void trataColisoes(Cenario cenario) {
-        bluesphere.trataBuracos(cenario.getBuracos());
-        redsphere.trataBuracos(cenario.getBuracos());
+    public void trataColisoes() {
+        bluesphere.trataBuracos(cenario_stones.getBuracos());
+        redsphere.trataBuracos(cenario_stones.getBuracos());
         
-        bluesphere.trataParedes(cenario.getParedes());
-        redsphere.trataParedes(cenario.getParedes());
+        bluesphere.trataParedes(cenario_stones.getParedes());
+        redsphere.trataParedes(cenario_stones.getParedes());
         
-        bluesphere.trataPedras(cenario.getPedras());
-        redsphere.trataPedras(cenario.getPedras());
+        bluesphere.trataPedras(cenario_stones.getPedras());
+        redsphere.trataPedras(cenario_stones.getPedras());
         
-        if (bluesphere.trataMarca(cenario.getFim())){
+        if (bluesphere.trataMarca(cenario_stones.getFim())){
             this.bluePoint++;
             this.playFinishSound();
             
-            respaw(bluesphere, cenario);
-        } else if (redsphere.trataMarca(cenario.getFim())){
+            respaw(bluesphere);
+        } else if (redsphere.trataMarca(cenario_stones.getFim())){
             this.redPoint++;
             this.playFinishSound();
             
-            respaw(redsphere, cenario);
+            respaw(redsphere);
         }
     }
     
-    public void respaw(Esfera sphere, Cenario cenario){
+    public void respaw(Esfera sphere){
         
-        sphere.setXY((int) cenario.inicio.getX() + 20, (int) cenario.inicio.getY() + 15);
+        sphere.setXY((int) cenario_stones.inicio.getX() + 20, (int) cenario_stones.inicio.getY() + 15);
         sphere.setVelXY(0,0);
         
     }
@@ -725,5 +761,15 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     
     private void stopTitleSong() {
         this.theme_song.stop();
+    }
+    
+    private int respaw(Esfera redsphere, Esfera bluesphere) {
+        
+        redsphere.setXY((int) cenario_stones.inicio.getX() + 20, (int) cenario_stones.inicio.getY() + 15);
+        redsphere.setVelXY(0,0);
+        bluesphere.setXY((int) cenario_stones.inicio.getX() + 40, (int) cenario_stones.inicio.getY() + 15);
+        bluesphere.setVelXY(0,0);
+        
+        return 0;
     }
 }
