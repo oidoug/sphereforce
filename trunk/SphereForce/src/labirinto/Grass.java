@@ -33,19 +33,9 @@ public class Grass extends Cenario{
 
         labirinto();
         
-        geraburacos(buraco);
-        geraobstaculos(pedra);
+ 
     }
 
-    public void gerarCenario(){
-        super.buracos();
-        super.pedras();
-    }
-    
-    public void gerarCenario( LinkedList<Buraco> buracos, LinkedList<Pedra> pedras){
-        super.setBuracos(buracos);
-        super.setPedras(pedras);
-    }
 
     private void labirinto() {
 
@@ -54,33 +44,13 @@ public class Grass extends Cenario{
         paredes.add(new Parede(bloco, 40, false, 0, 0, 3));
         paredes.add(new Parede(bloco, 30, true, Constantes.TAMANHO_BLOCO * 39, 0, 4));
 
-        paredes.add(new Parede(bloco, 20, true, Constantes.TAMANHO_BLOCO * 8, Constantes.TAMANHO_BLOCO, 5));
-        paredes.add(new Parede(bloco, 20, true, Constantes.TAMANHO_BLOCO * 16, Constantes.TAMANHO_BLOCO * 10, 6));
-        paredes.add(new Parede(bloco, 20, true, Constantes.TAMANHO_BLOCO * 24, Constantes.TAMANHO_BLOCO, 7));
-        paredes.add(new Parede(bloco, 20, true, Constantes.TAMANHO_BLOCO * 31, Constantes.TAMANHO_BLOCO * 10, 8));
+        paredes.add(new Parede(bloco, 4, false, Constantes.TAMANHO_BLOCO * 10, Constantes.TAMANHO_BLOCO * 25, 51));
+        paredes.add(new Parede(bloco, 5, false, 0, Constantes.TAMANHO_BLOCO * 24, 52));
+        paredes.add(new Parede(bloco, 6, false, Constantes.TAMANHO_BLOCO * 15, Constantes.TAMANHO_BLOCO * 21, 61));
+        paredes.add(new Parede(bloco, 10, false, Constantes.TAMANHO_BLOCO * 5, Constantes.TAMANHO_BLOCO * 20, 62));
+        paredes.add(new Parede(bloco, 25, false, 0, Constantes.TAMANHO_BLOCO * 15, 7));
+        paredes.add(new Parede(bloco, 15 , false, Constantes.TAMANHO_BLOCO * 15, Constantes.TAMANHO_BLOCO * 10, 8));
+        paredes.add(new Parede(bloco, 10, false, Constantes.TAMANHO_BLOCO * 5, Constantes.TAMANHO_BLOCO * 5, 8));
     }
     
-        private void geraburacos(Image buraco) {
-        LinkedList<Buraco> buracos = new LinkedList<Buraco>();
-        
-        buracos.add(new Buraco(buraco, 27, 60));
-        buracos.add(new Buraco(buraco, 269, 90));
-        buracos.add(new Buraco(buraco, 310, 340));
-        buracos.add(new Buraco(buraco, 150, 510));
-        buracos.add(new Buraco(buraco, 740, 268));
-        
-        super.setBuracos(buracos);
-    }
-    
-    private void geraobstaculos(Image arvore) {
-        LinkedList<Pedra> arvores = new LinkedList<Pedra>();
-        
-        arvores.add(new Pedra(arvore, 100, 100));
-        arvores.add(new Pedra(arvore, 200, 600));
-        arvores.add(new Pedra(arvore, 500, 100));
-        arvores.add(new Pedra(arvore, 200, 400));
-        arvores.add(new Pedra(arvore, 70, 50));
-    
-        super.setPedras(arvores);
-    }
 }

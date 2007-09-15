@@ -18,13 +18,14 @@ import labirinto.core.DataChat;
  */
 public class ChatReceive implements Runnable{
 
-    private Thread receive;
+
     private ConectionTcp tcp;
     private Chat chat;
     private DataChat datac;
+    private boolean ativado;
     
     public ChatReceive(ConectionTcp tcp, Chat chat) {
-        receive = new Thread();
+
         
         this.tcp = tcp;
         this.chat = chat;
@@ -33,12 +34,10 @@ public class ChatReceive implements Runnable{
         System.out.println("passo do start, OUVINDO NA PORTA TCP");
     }
     
-    public void stop() {
-        receive.interrupt();
-    }
+
 
     public void run() {
-        while(true) {
+        while(ativado) {
             System.out.println("esperando string do chat");
 
             try {
@@ -50,12 +49,12 @@ public class ChatReceive implements Runnable{
             }
         }
     }
-    
-    public boolean isRunning() {
-        return !receive.isInterrupted();
+
+    void setAtivado(boolean b) {
+        ativado = b;
     }
     
-    public void recover() {
-        receive.start();
-    }
+    
+    
+
 }

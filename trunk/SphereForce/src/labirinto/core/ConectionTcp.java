@@ -44,7 +44,7 @@ public class ConectionTcp {
     /** Creates a new instance of Conection */
     
     //cria instancia para o servidor
-    public ConectionTcp() throws Exception {
+    public ConectionTcp(int port) throws Exception {
         servidor = true;
         try {
             serverSocket = new ServerSocket(port,1);
@@ -57,7 +57,7 @@ public class ConectionTcp {
     }
     
     //cria instancia para o cliente
-    public ConectionTcp(String ip) throws Exception {
+    public ConectionTcp(String ip, int port) throws Exception {
         servidor = false;
         InetAddress ipAddr = InetAddress.getByName(ip);
         try {
@@ -130,6 +130,24 @@ public class ConectionTcp {
         this.qntPedra = (int) gameQnts.getY();        
     }
     
+    public void receiveSmt() throws Exception {
+        
+        try {
+            Object object = (Object) input.readObject();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+     
+    }
+    
+    public void limpaSaida(){
+        try {
+            output.flush();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
     public int getQntBuraco(){
         return qntBuraco;
     }
@@ -188,19 +206,6 @@ public class ConectionTcp {
         }
         Pedra pedra = new Pedra(p, (int) cord.getX(), (int) cord.getY());        
         return pedra;
-    }
-    
-    public void closeConection() throws Exception {
-        try {
-            if (servidor)
-                serverSocket.close();
-            output.close();
-            input.close();
-            socket.close();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
     }
            
 }

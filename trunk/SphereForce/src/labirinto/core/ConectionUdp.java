@@ -136,7 +136,4 @@ public class ConectionUdp {
         return this.portaCliente;
     }
     
-    public void closeConection(){
-        udp_socket.close();
-    }
 }

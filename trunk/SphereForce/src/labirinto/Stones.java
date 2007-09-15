@@ -11,11 +11,8 @@ package labirinto;
 
 import java.applet.AudioClip;
 import java.awt.Image;
-import labirinto.core.Parede;
-import labirinto.core.Marca;
 import java.util.LinkedList;
-import labirinto.core.Pedra;
-import labirinto.core.Buraco;
+import labirinto.core.*;
 
 /**
  *
