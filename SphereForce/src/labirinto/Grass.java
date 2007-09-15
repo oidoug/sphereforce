@@ -28,8 +28,8 @@ public class Grass extends Cenario{
                 super(background, buraco, bloco, pedra, marca_inicio, marca_fim, dificuldade);
 
         /* Precisa-se criar as marcas de inicio e fim do cenario */
-        super.inicio = new Marca(marca_inicio, 40, 40);
-        super.fim = new Marca(marca_fim, Constantes.WINDOW_WIDTH - 100 - 40, Constantes.WINDOW_HEIGHT - 50 - 40);
+        super.inicio = new Marca(marca_inicio, 25, 530 );
+        super.fim = new Marca(marca_fim, 670, 25);
 
         labirinto();
         
@@ -39,18 +39,32 @@ public class Grass extends Cenario{
 
     private void labirinto() {
 
-        paredes.add(new Parede(bloco, 40, false, 0, Constantes.TAMANHO_BLOCO * 29, 1));
-        paredes.add(new Parede(bloco, 30, true, 0, 0, 2));
-        paredes.add(new Parede(bloco, 40, false, 0, 0, 3));
-        paredes.add(new Parede(bloco, 30, true, Constantes.TAMANHO_BLOCO * 39, 0, 4));
+        paredes.add(new Parede(bloco, 40, false, 0, Constantes.TAMANHO_BLOCO * 29, 100));
+        paredes.add(new Parede(bloco, 30, true, 0, 0, 200));
+        paredes.add(new Parede(bloco, 40, false, 0, 0, 300));
+        paredes.add(new Parede(bloco, 30, true, Constantes.TAMANHO_BLOCO * 39, 0, 400));
 
-        paredes.add(new Parede(bloco, 4, false, Constantes.TAMANHO_BLOCO * 10, Constantes.TAMANHO_BLOCO * 25, 51));
-        paredes.add(new Parede(bloco, 5, false, 0, Constantes.TAMANHO_BLOCO * 24, 52));
-        paredes.add(new Parede(bloco, 6, false, Constantes.TAMANHO_BLOCO * 15, Constantes.TAMANHO_BLOCO * 21, 61));
-        paredes.add(new Parede(bloco, 10, false, Constantes.TAMANHO_BLOCO * 5, Constantes.TAMANHO_BLOCO * 20, 62));
-        paredes.add(new Parede(bloco, 25, false, 0, Constantes.TAMANHO_BLOCO * 15, 7));
-        paredes.add(new Parede(bloco, 15 , false, Constantes.TAMANHO_BLOCO * 15, Constantes.TAMANHO_BLOCO * 10, 8));
-        paredes.add(new Parede(bloco, 10, false, Constantes.TAMANHO_BLOCO * 5, Constantes.TAMANHO_BLOCO * 5, 8));
+        paredes.add(new Parede(bloco, 6, false, Constantes.TAMANHO_BLOCO * 0, Constantes.TAMANHO_BLOCO * 23, 1));
+        paredes.add(new Parede(bloco, 6, false, Constantes.TAMANHO_BLOCO * 11, Constantes.TAMANHO_BLOCO * 25, 2));
+        paredes.add(new Parede(bloco, 7, false, Constantes.TAMANHO_BLOCO * 5, Constantes.TAMANHO_BLOCO * 18, 3));
+        paredes.add(new Parede(bloco, 6, false, Constantes.TAMANHO_BLOCO * 17, Constantes.TAMANHO_BLOCO * 20, 4));
+        paredes.add(new Parede(bloco, 7, false, Constantes.TAMANHO_BLOCO * 28, Constantes.TAMANHO_BLOCO * 24, 5));
+        paredes.add(new Parede(bloco, 6, false, Constantes.TAMANHO_BLOCO * 34, Constantes.TAMANHO_BLOCO * 17, 6));
+        paredes.add(new Parede(bloco, 7, false, Constantes.TAMANHO_BLOCO * 28, Constantes.TAMANHO_BLOCO * 12, 7));
+        paredes.add(new Parede(bloco, 19, false, Constantes.TAMANHO_BLOCO * 0, Constantes.TAMANHO_BLOCO * 13, 8));
+        paredes.add(new Parede(bloco, 11, false, Constantes.TAMANHO_BLOCO * 18, Constantes.TAMANHO_BLOCO * 15, 9));
+        paredes.add(new Parede(bloco, 7, false, Constantes.TAMANHO_BLOCO * 5, Constantes.TAMANHO_BLOCO * 4, 10));
+        paredes.add(new Parede(bloco, 13, false, Constantes.TAMANHO_BLOCO * 9, Constantes.TAMANHO_BLOCO * 7, 11));
+        paredes.add(new Parede(bloco, 19, false, Constantes.TAMANHO_BLOCO * 21, Constantes.TAMANHO_BLOCO * 5, 12));
+        paredes.add(new Parede(bloco, 8, true, Constantes.TAMANHO_BLOCO * 11, Constantes.TAMANHO_BLOCO * 18, 13));
+        paredes.add(new Parede(bloco, 10, true, Constantes.TAMANHO_BLOCO * 23, Constantes.TAMANHO_BLOCO * 20, 14));
+        paredes.add(new Parede(bloco, 13, true, Constantes.TAMANHO_BLOCO * 28, Constantes.TAMANHO_BLOCO * 12, 15));
+        paredes.add(new Parede(bloco, 3, true, Constantes.TAMANHO_BLOCO * 18, Constantes.TAMANHO_BLOCO * 13, 16));
+        paredes.add(new Parede(bloco, 5, true, Constantes.TAMANHO_BLOCO * 21, Constantes.TAMANHO_BLOCO * 5, 17));
+        paredes.add(new Parede(bloco, 5, true, Constantes.TAMANHO_BLOCO * 5, Constantes.TAMANHO_BLOCO * 4, 18));
+        
+        
+        
     }
     
 }

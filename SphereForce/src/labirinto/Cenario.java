@@ -295,8 +295,8 @@ public class Cenario {
     }
     
     public void trataColisoes() {
-        bluesphere.trataBuracos(buracos);
-        redsphere.trataBuracos(buracos);
+        bluesphere.trataBuracos(buracos, inicio);
+        redsphere.trataBuracos(buracos, inicio);
         
         bluesphere.trataParedes(paredes);
         redsphere.trataParedes(paredes);

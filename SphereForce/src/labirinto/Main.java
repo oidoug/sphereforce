@@ -221,12 +221,11 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     private void initGame() {
         this.chatON = false;
         iniciaCenarios();
-        //primeiro mapa a ser jogado
-        mapOn = Constantes.CENARIO_STONES;
-        initCenario(cenario_grass);
         initCenario(cenario_stones);
-        //iniciar o grass tb
-        gerarCenario(cenario_stones);
+        initCenario(cenario_grass);
+        //primeiro mapa a ser jogado         --->arrumar aki o mapa q inicia
+        mapOn = Constantes.CENARIO_GRASS;
+        gerarCenario(cenario_grass);
         
         if (servidor)
             redsphere.connect(conUdp);
@@ -261,6 +260,8 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     public void gerarCenario(Cenario cenario){
         LinkedList<Buraco> buracos;
         LinkedList<Pedra> pedras;
+        bluesphere.setXY(cenario.inicio.getX() + 15, cenario.inicio.getY() + 12);
+        redsphere.setXY(cenario.inicio.getX() + 55, cenario.inicio.getY() + 12);
         if (servidor){
             cenario.gerarCenario();
             try {
