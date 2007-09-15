@@ -304,15 +304,15 @@ public class Esfera {
         }
     }
     
-    public void trataBuracos(LinkedList<Buraco> buracos) {
+    public void trataBuracos(LinkedList<Buraco> buracos, Marca inicio) {
         for (Buraco hole : buracos) {
             float distancia = getDistancia(x, y, hole.getX(), hole.getY());
             if (distancia < raio) {
                 
                 applet.playHoleSound();
                 
-                x = Constantes.SPHERE_INIT_POINT_X;
-                y = Constantes.SPHERE_INIT_POINT_Y;
+                x = inicio.getX() + 50;
+                y = inicio.getY() + 20;
             }
         }
     }
