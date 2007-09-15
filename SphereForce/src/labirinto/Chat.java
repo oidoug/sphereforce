@@ -18,6 +18,7 @@ import labirinto.core.ConectionTcp;
 import labirinto.core.DataChat;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.nio.channels.Selector;
 
 /**
  *
@@ -28,10 +29,13 @@ public class Chat {
     private Main applet;
     private Image chat_image;
     private ConectionTcp conn;
-    private ChatReceive receiveThread;
+    private ChatReceive receive;
+    private Thread receiveThread;
+    private Selector selector;
     
     private String input;
     private LinkedList<DataChat> outputs;
+    
     
     private ExecutorService threadExecutor = Executors.newFixedThreadPool(1);
     
@@ -42,10 +46,7 @@ public class Chat {
         outputs = new LinkedList<DataChat>();
     }
     
-    public void paint(Graphics g) {
-        if (!receiveThread.isRunning()) {
-            receiveThread.recover();
-        }
+    public void paint(Graphics g) {        
         
         g.drawImage(chat_image, 0, 0, applet);
         g.setColor(Color.GREEN);
@@ -121,20 +122,15 @@ public class Chat {
     void connect(ConectionTcp conection) {
         System.out.println("dentro do connet da classe CHAT");
         this.conn = conection;
-        receiveThread = new ChatReceive(conn, this);
+        receive = new ChatReceive(conn,this);
+        receive.setAtivado(true);
+        receiveThread = new Thread(receive);
+        receiveThread.start();
         
-        threadExecutor.execute(receiveThread);
-        
-    }
-    
-    public void stopThread(){
-        threadExecutor.shutdown();
-        receiveThread = null;
-        System.out.println("dei shutdown");
     }
     
     
-    public void restartThread(){
-        receiveThread.recover();
-    }
+    
+    
+   
 }
