@@ -75,7 +75,7 @@ public class Constantes {
     
     public static final long LOGO_OUT_TIME = 3000;
     
-    public static final int POINTS_TO_WIN = 5;
+    public static final int POINTS_TO_WIN = 3;
     
     
     

@@ -235,7 +235,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         
         chatscreen.connect(conTcp);
         state = GAME_ON;
-        //playStartSound();
+        playStartSound();
         
     }
     
@@ -254,6 +254,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
         
         state = GAME_ON;
         playStartSound();
+        playCenarioSong();
         
     }
     
@@ -352,7 +353,6 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//                        bluesphere.refresh(conUdp);
         }
     }
     
@@ -371,7 +371,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
             case GAME_ON:
                 if(!song_spheregear_on) {
                     stopTitleSong();
-                    //playCenarioSong();
+                    playCenarioSong();
                     this.song_spheregear_on = true;
                 }
                 if(chatON) {
@@ -384,6 +384,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                     else
                         whoWin = pintaCenario(g, cenario_grass);
                     
+
                     if (whoWin == Constantes.SERVER_WIN){
                         state = SMB_WON;
                         this.blueMapPoint++;
@@ -400,7 +401,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
                 
             case LOGO:
                 if(!song_theme_on) {
-                    //playTitleSong();
+                    playTitleSong();
                     song_theme_on = true;
                 }
                 logoscreen.paint(g);
@@ -725,7 +726,7 @@ public class Main extends DoubleBufferApplet implements Runnable, KeyListener {
     }
     
     private void playTitleSong() {
-        this.theme_song.play();
+        this.theme_song.loop();
     }
     
     private void initSounds() {
