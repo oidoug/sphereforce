@@ -135,8 +135,6 @@ public class Menu {
                 applet.startsAsServer();
             }
             if (selected_button == 1) {
-                Label ip_input = new Label("Enter a valid IP:");
-                TextField ip_string = new TextField();
                 applet.startsAsClient();
             }
             if (selected_button == 2) {

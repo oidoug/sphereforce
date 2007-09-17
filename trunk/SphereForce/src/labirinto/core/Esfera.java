@@ -365,8 +365,10 @@ public class Esfera {
         if ((y >= marca.getY()) &&
                 (y <= marca.getY() + marca.getH())
                 && (x >= marca.getX())
-                && (x <= marca.getX() + marca.getW()))
-                return true;
+                && (x <= marca.getX() + marca.getW())) {
+            applet.playFinishSound();
+            return true;
+        }
         else
                 return false;
   
