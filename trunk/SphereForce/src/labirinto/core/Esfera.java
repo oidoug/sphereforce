@@ -384,6 +384,7 @@ public class Esfera {
                 if ((wall.getY() <= y + 2 * raio) && (wall.getY() > y)) {
                     System.out.printf("\n bateu em cima da parede: %d", wall.getId());
                     velY = -velY;
+                    y = wall.getY() - 2 * raio;
 
 
                 }
